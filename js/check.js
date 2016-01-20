@@ -1,7 +1,7 @@
 'use strict';
 
 function getMessage(a, b) {
-  var calcTotalCompression = function () {
+  var calcTotalCompression = function (a, b) {
     var sum = 0;
     if (a.length != b.length) {
       throw 'Arrays have different sizes';
@@ -13,7 +13,7 @@ function getMessage(a, b) {
     return sum;
   };
 
-  var sumRedDots = function () {
+  var sumRedDots = function (a) {
     var sum = 0;
     for (var i = 0; i < a.length; i++) {
       sum += a[i];
@@ -21,11 +21,13 @@ function getMessage(a, b) {
     return sum;
   };
 
-  var isDigit = (typeof b === 'number');
+  var isDigit = function (x) {
+    return typeof x === 'number';
+  };
 
   var checkGif = function () {
     if (a) {
-      if (isDigit) {
+      if (isDigit(b)) {
         return 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
       }
       else {
@@ -37,7 +39,7 @@ function getMessage(a, b) {
   };
 
   var checkSvg = function () {
-    if (isDigit) {
+    if (isDigit(b)) {
       var calcAttr = b * 4;
       return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + calcAttr + ' аттрибутов';
     }
@@ -47,18 +49,18 @@ function getMessage(a, b) {
 
   if (Array.isArray(a)) {
     if (Array.isArray(b)) {
-      return 'Общая площадь артефактов сжатия: ' + calcTotalCompression() + ' пикселей';
+      return 'Общая площадь артефактов сжатия: ' + calcTotalCompression(a, b) + ' пикселей';
     } else {
-      return 'Количество красных точек во всех строчках изображения: ' + sumRedDots();
+      return 'Количество красных точек во всех строчках изображения: ' + sumRedDots(a);
     }
   }
 
   switch (typeof a) {
     case 'boolean':
-      return checkGif();
+      checkGif();
       break;
     case 'number':
-      return checkSvg();
+      checkSvg();
       break;
     default:
       throw 'First argument:' + a + 'has not supported type';

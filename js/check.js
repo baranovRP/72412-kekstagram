@@ -47,9 +47,9 @@ function getMessage(a, b) {
 
   if (Array.isArray(a)) {
     if (Array.isArray(b)) {
-      return 'Общая площадь артефактов сжатия: ' + calcTotalCompression(a, b) + ' пикселей';
+      return 'Общая площадь артефактов сжатия: ' + calcTotalCompression() + ' пикселей';
     } else {
-      return 'Количество красных точек во всех строчках изображения: ' + sumRedDots(a);
+      return 'Количество красных точек во всех строчках изображения: ' + sumRedDots();
     }
   }
 

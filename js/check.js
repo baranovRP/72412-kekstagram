@@ -1,7 +1,7 @@
 'use strict';
 
 function getMessage(a, b) {
-  var calcTotalCompression = function (a, b) {
+  var calcTotalCompression = function () {
     var sum = 0;
     if (a.length != b.length) {
       throw 'Arrays have different sizes';
@@ -13,7 +13,7 @@ function getMessage(a, b) {
     return sum;
   };
 
-  var sumRedDots = function (a) {
+  var sumRedDots = function () {
     var sum = 0;
     for (var i = 0; i < a.length; i++) {
       sum += a[i];
@@ -21,13 +21,11 @@ function getMessage(a, b) {
     return sum;
   };
 
-  var isDigit = function (x) {
-    return typeof x === 'number';
-  };
+  var isDigit = (typeof b === 'number');
 
   var checkGif = function () {
     if (a) {
-      if (isDigit(b)) {
+      if (isDigit) {
         return 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
       }
       else {
@@ -39,7 +37,7 @@ function getMessage(a, b) {
   };
 
   var checkSvg = function () {
-    if (isDigit(b)) {
+    if (isDigit) {
       var calcAttr = b * 4;
       return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + calcAttr + ' аттрибутов';
     }

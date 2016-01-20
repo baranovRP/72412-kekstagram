@@ -25,7 +25,7 @@ function getMessage(a, b) {
     return typeof x === 'number';
   };
 
-  var checkGif = function () {
+  var checkGif = function (a, b) {
     if (a) {
       if (isDigit(b)) {
         return 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
@@ -38,7 +38,7 @@ function getMessage(a, b) {
     }
   };
 
-  var checkSvg = function () {
+  var checkSvg = function (a, b) {
     if (isDigit(b)) {
       var calcAttr = b * 4;
       return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + calcAttr + ' аттрибутов';
@@ -57,10 +57,10 @@ function getMessage(a, b) {
 
   switch (typeof a) {
     case 'boolean':
-      checkGif();
+      return checkGif(a, b);
       break;
     case 'number':
-      checkSvg();
+      return checkSvg(a, b);
       break;
     default:
       throw 'First argument:' + a + 'has not supported type';

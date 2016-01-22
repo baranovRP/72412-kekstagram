@@ -119,6 +119,11 @@
           this._resizeConstraint.side - this._ctx.lineWidth / 2,
           this._resizeConstraint.side - this._ctx.lineWidth / 2);
 
+      var figureSize = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
+      var axisX = 0;
+      var axisY = (-this._resizeConstraint.side / 2) - (this._ctx.lineWidth + this._ctx.lineWidth / 2);
+      this.displayText(figureSize, axisX, axisY);
+
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
       // следующий кадр рисовался с привычной системой координат, где точка
@@ -126,6 +131,20 @@
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
       this._ctx.restore();
+    },
+
+    /**
+     * Display text in specified coordinates.
+     * @param {string} text
+     * @param {number} axisX
+     * @param {number} axisY
+     */
+    displayText: function(text, axisX, axisY) {
+      this._ctx.fillStyle = '#ffffff';
+      this._ctx.font = '10pt Arial';
+      this._ctx.textAlign = 'center';
+
+      this._ctx.fillText(text, axisX, axisY);
     },
 
     /**

@@ -118,7 +118,7 @@
         frameH: this._resizeConstraint.side - this._ctx.lineWidth / 2
       };
 
-      this._showCropArea(frameRect);
+      this._showCropArea(frameRect, this._ctx.lineWidth);
 
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
@@ -141,9 +141,10 @@
     /**
      * Create and show picture's crop area by decrease opacity of cropped parts.
      * @param {Object} rectangular
+     * @param {number} lineWidth
      * @private
      */
-    _showCropArea: function(rectangular) {
+    _showCropArea: function(rectangular, lineWidth) {
       this._ctx.save();
 
       var maskCanvas = document.createElement('canvas');
@@ -157,7 +158,11 @@
       _ctxMask.globalCompositeOperation = 'xor';
 
       _ctxMask.translate(this._container.width / 2, this._container.height / 2);
-      _ctxMask.fillRect(rectangular.frameX, rectangular.frameY, rectangular.frameW, rectangular.frameH);
+      _ctxMask.fillRect(
+        rectangular.frameX - lineWidth / 2,
+        rectangular.frameY - lineWidth / 2,
+        rectangular.frameW + lineWidth,
+        rectangular.frameH + lineWidth);
       this._ctx.drawImage(maskCanvas, -this._container.width / 2, -this._container.height / 2);
 
       this._ctx.restore();

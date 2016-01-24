@@ -111,13 +111,23 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
+      var frameRect = {
+        frameX: (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        frameY: (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        frameW: this._resizeConstraint.side - this._ctx.lineWidth / 2,
+        frameH: this._resizeConstraint.side - this._ctx.lineWidth / 2
+      };
+
+      this._showCropArea(frameRect, this._ctx.lineWidth);
+
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
-      this._ctx.strokeRect(
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2);
+      this._ctx.strokeRect(frameRect.frameX, frameRect.frameY, frameRect.frameW, frameRect.frameH);
+
+      var figureSize = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
+      var axisX = 0;
+      var axisY = (-this._resizeConstraint.side / 2) - (this._ctx.lineWidth + this._ctx.lineWidth / 2);
+      this._displayText(figureSize, axisX, axisY);
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
@@ -126,6 +136,51 @@
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
       this._ctx.restore();
+    },
+
+    /**
+     * Create and show picture's crop area by decrease opacity of cropped parts.
+     * @param {Object} rectangular
+     * @param {number} lineWidth
+     * @private
+     */
+    _showCropArea: function(rectangular, lineWidth) {
+      this._ctx.save();
+
+      var maskCanvas = document.createElement('canvas');
+      maskCanvas.width = this._container.width;
+      maskCanvas.height = this._container.height;
+      var _ctxMask = maskCanvas.getContext('2d');
+
+      _ctxMask.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      _ctxMask.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+
+      _ctxMask.globalCompositeOperation = 'xor';
+
+      _ctxMask.translate(this._container.width / 2, this._container.height / 2);
+      _ctxMask.fillRect(
+        rectangular.frameX - lineWidth / 2,
+        rectangular.frameY - lineWidth / 2,
+        rectangular.frameW + lineWidth,
+        rectangular.frameH + lineWidth);
+      this._ctx.drawImage(maskCanvas, -this._container.width / 2, -this._container.height / 2);
+
+      this._ctx.restore();
+    },
+
+    /**
+     * Display text in specified coordinates.
+     * @param {string} text
+     * @param {number} axisX
+     * @param {number} axisY
+     * @private
+     */
+    _displayText: function(text, axisX, axisY) {
+      this._ctx.fillStyle = '#ffffff';
+      this._ctx.font = '10pt Arial';
+      this._ctx.textAlign = 'center';
+
+      this._ctx.fillText(text, axisX, axisY);
     },
 
     /**

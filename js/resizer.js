@@ -146,18 +146,15 @@
     /**
      * Draw dotted rectangular.
      * @param {Object} rectangular
-     * @param {number} lineWidth
+     * @param {number} circleDiameter
      * @param {string} fillStyle
      * @param {number} shift
      * @private
      */
-    _drawDottedBorder: function(rectangular, lineWidth, fillStyle, shift) {
+    _drawDottedBorder: function(rectangular, circleDiameter, fillStyle, shift) {
       this._ctx.save();
 
-      /** @constant {number} */
-      var CIRCLE_DIAMETER = lineWidth;
-
-      var dashLength = (CIRCLE_DIAMETER + shift);
+      var dashLength = (circleDiameter + shift);
 
       this._ctx.fillStyle = fillStyle;
 
@@ -185,7 +182,7 @@
       this._ctx.moveTo(topLeft.topLeftX, topLeft.topLeftY);
       for (var i = 0; i < horizontalLength / dashLength; i++ ) {
         this._ctx.beginPath();
-        this._ctx.arc(topLeft.topLeftX + i * dashLength, topLeft.topLeftY, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.arc(topLeft.topLeftX + i * dashLength, topLeft.topLeftY, circleDiameter / 2, 0, Math.PI * 2, true);
         this._ctx.fill();
 
       }
@@ -194,7 +191,7 @@
       this._ctx.moveTo(topRight.topRightX, topRight.topRightY);
       for (var l = 0; l < verticalLength / dashLength; l++) {
         this._ctx.beginPath();
-        this._ctx.arc(topRight.topRightX, topRight.topRightY + l * dashLength, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.arc(topRight.topRightX, topRight.topRightY + l * dashLength, circleDiameter / 2, 0, Math.PI * 2, true);
         this._ctx.fill();
       }
 
@@ -202,7 +199,7 @@
       this._ctx.moveTo(bottomRight.bottomRightX, bottomRight.bottomRightY);
       for (var k = 0; k < horizontalLength / dashLength; k++) {
         this._ctx.beginPath();
-        this._ctx.arc(bottomRight.bottomRightX - k * dashLength, bottomRight.bottomRightY, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.arc(bottomRight.bottomRightX - k * dashLength, bottomRight.bottomRightY, circleDiameter / 2, 0, Math.PI * 2, true);
         this._ctx.fill();
       }
 
@@ -210,7 +207,7 @@
       this._ctx.moveTo(bottomLeft.bottomLeftX, bottomLeft.bottomLeftY);
       for (var j = 0; j < verticalLength / dashLength; j++) {
         this._ctx.beginPath();
-        this._ctx.arc(bottomLeft.bottomLeftX, bottomLeft.bottomLeftY - j * dashLength, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.arc(bottomLeft.bottomLeftX, bottomLeft.bottomLeftY - j * dashLength, circleDiameter / 2, 0, Math.PI * 2, true);
         this._ctx.fill();
       }
 

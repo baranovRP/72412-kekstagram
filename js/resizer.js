@@ -122,7 +122,12 @@
 
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
+      // comment for revoke methods with different frame style
       this._ctx.strokeRect(frameRect.frameX, frameRect.frameY, frameRect.frameW, frameRect.frameH);
+
+      // comment line 126 and uncomment next lines for dotted frame
+      //var shiftInterval = 2;
+      //this._drawDottedBorder(frameRect, this._ctx.lineWidth, this._ctx.strokeStyle, shiftInterval);
 
       var figureSize = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
       var axisX = 0;
@@ -135,6 +140,80 @@
       // 0 0 находится в левом верхнем углу холста, в противном случае
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
+      this._ctx.restore();
+    },
+
+    /**
+     * Draw dotted rectangular.
+     * @param {Object} rectangular
+     * @param {number} lineWidth
+     * @param {string} fillStyle
+     * @param {number} shift
+     * @private
+     */
+    _drawDottedBorder: function(rectangular, lineWidth, fillStyle, shift) {
+      this._ctx.save();
+
+      /** @constant {number} */
+      var CIRCLE_DIAMETER = lineWidth;
+
+      var dashLength = (CIRCLE_DIAMETER + shift);
+
+      this._ctx.fillStyle = fillStyle;
+
+      var horizontalLength = rectangular.frameW;
+      var verticalLength = rectangular.frameH;
+
+      var topLeft = {
+        topLeftX: rectangular.frameX,
+        topLeftY: rectangular.frameY
+      };
+      var topRight = {
+        topRightX: rectangular.frameX + rectangular.frameW,
+        topRightY: rectangular.frameY
+      };
+      var bottomRight = {
+        bottomRightX: rectangular.frameX + rectangular.frameW,
+        bottomRightY: rectangular.frameY + rectangular.frameH
+      };
+      var bottomLeft = {
+        bottomLeftX: rectangular.frameX,
+        bottomLeftY: rectangular.frameY + rectangular.frameH
+      };
+
+      // top horizontal line
+      this._ctx.moveTo(topLeft.topLeftX, topLeft.topLeftY);
+      for (var i = 0; i < horizontalLength / dashLength; i++ ) {
+        this._ctx.beginPath();
+        this._ctx.arc(topLeft.topLeftX + i * dashLength, topLeft.topLeftY, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.fill();
+
+      }
+
+      // right vertical line
+      this._ctx.moveTo(topRight.topRightX, topRight.topRightY);
+      for (var l = 0; l < verticalLength / dashLength; l++) {
+        this._ctx.beginPath();
+        this._ctx.arc(topRight.topRightX, topRight.topRightY + l * dashLength, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.fill();
+      }
+
+      // bottom horizontal line
+      this._ctx.moveTo(bottomRight.bottomRightX, bottomRight.bottomRightY);
+      for (var k = 0; k < horizontalLength / dashLength; k++) {
+        this._ctx.beginPath();
+        this._ctx.arc(bottomRight.bottomRightX - k * dashLength, bottomRight.bottomRightY, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.fill();
+      }
+
+      // left vertical line
+      this._ctx.moveTo(bottomLeft.bottomLeftX, bottomLeft.bottomLeftY);
+      for (var j = 0; j < verticalLength / dashLength; j++) {
+        this._ctx.beginPath();
+        this._ctx.arc(bottomLeft.bottomLeftX, bottomLeft.bottomLeftY - j * dashLength, CIRCLE_DIAMETER / 2, 0, Math.PI * 2, true);
+        this._ctx.fill();
+      }
+
       this._ctx.restore();
     },
 

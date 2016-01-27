@@ -72,6 +72,21 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
+    var resizeXInput = resizeX.value;
+    var resizeYInput = resizeY.value;
+    var resizeSizeInput = resizeSize.value;
+
+    if (resizeSizeInput < 1 || resizeXInput < 0 || resizeYInput < 0) {
+      resizeErrorMsg = 'Размеры рамки для кадрирования меньше допустимых';
+      return false;
+    } else if (resizeXInput + resizeSizeInput > currentResizer._image.naturalWidth) {
+      resizeErrorMsg = 'Рамка для кадрирования больше чем ширина изображения';
+      return false;
+    } else if (resizeYInput + resizeSizeInput > currentResizer._image.naturalHeight) {
+      resizeErrorMsg = 'Рамка для кадрирования больше чем высота изображения';
+      return false;
+    }
+
     return true;
   }
 
@@ -86,6 +101,12 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+
+  var resizeX = resizeForm['resize-x'];
+  var resizeY = resizeForm['resize-y'];
+  var resizeSize = resizeForm['resize-size'];
+  var resizeFormBtnFwd = resizeForm['resize-fwd'];
+  var resizeErrorMsg;
 
   /**
    * Форма добавления фильтра.
@@ -199,6 +220,9 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+    } else {
+      resizeFormBtnFwd.disabled = true;
+      showMessage(Action.ERROR, resizeErrorMsg);
     }
   };
 

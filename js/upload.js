@@ -42,6 +42,18 @@
   var currentResizer;
 
   /**
+   * Set default values for input fields
+   */
+  var setDefaultValues = function() {
+    var sideRatio = 0.75;
+    var shortSide = Math.min(currentResizer._image.naturalWidth, currentResizer._image.naturalHeight);
+
+    resizeSize.value = sideRatio * shortSide;
+    resizeX.value = (currentResizer._image.naturalWidth - resizeSize.value) / 2;
+    resizeY.value = (currentResizer._image.naturalHeight - resizeSize.value) / 2;
+  };
+
+  /**
    * Удаляет текущий объект {@link Resizer}, чтобы создать новый с другим
    * изображением.
    */
@@ -179,7 +191,7 @@
 
           uploadForm.classList.add('invisible');
           resizeForm.classList.remove('invisible');
-
+          setDefaultValues();
           hideMessage();
         };
 

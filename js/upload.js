@@ -93,6 +93,13 @@
    */
   var filterForm = document.forms['upload-filter'];
 
+  var photoFilters = [
+    filterForm['upload-filter-none'],
+    filterForm['upload-filter-chrome'],
+    filterForm['upload-filter-sepia']];
+
+  var filterCookie = 'photofilter';
+
   /**
    * @type {HTMLImageElement}
    */
@@ -214,6 +221,42 @@
   };
 
   /**
+   * Save filter state and expiry date to cookies
+   */
+  function saveFilterAndExpiryDateToCookie() {
+    photoFilters.forEach(function(name) {
+      if (name.checked) {
+        docCookies.setItem(filterCookie, name.id.toString(), getCookieExpiryDate());
+      }
+    });
+  }
+
+  /**
+   * Restore filter state from cookies
+   */
+  function restoreFilterFromCookie() {
+    document.getElementById(docCookies.getItem(filterCookie)).checked = true;
+  }
+
+  /**
+   * Return cookie expiry date
+   */
+  function getCookieExpiryDate() {
+    var currentDateMsec = +Date.now();
+    var startDateMsec = +new Date(2015, 11, 19);
+    return new Date(currentDateMsec + calcCookieLifeTime(currentDateMsec, startDateMsec)).toUTCString();
+  }
+
+  /**
+   * Calculate cookies' life time, as difference between current date and date in the past
+   * @param{number} toDate
+   * @param{number} fromDate
+   */
+  function calcCookieLifeTime(toDate, fromDate) {
+    return Math.abs(toDate - fromDate);
+  }
+
+  /**
    * Отправка формы фильтра. Возвращает в начальное состояние, предварительно
    * записав сохраненный фильтр в cookie.
    * @param {Event} evt
@@ -221,6 +264,7 @@
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
 
+    saveFilterAndExpiryDateToCookie();
     cleanupResizer();
     updateBackground();
 
@@ -254,6 +298,7 @@
     filterImage.className = 'filter-image-preview ' + filterMap[selectedFilter];
   };
 
+  restoreFilterFromCookie();
   cleanupResizer();
   updateBackground();
 })();

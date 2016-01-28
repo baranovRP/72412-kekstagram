@@ -84,9 +84,9 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    var resizeXInput = resizeX.value;
-    var resizeYInput = resizeY.value;
-    var resizeSizeInput = resizeSize.value;
+    var resizeXInput = +resizeX.value;
+    var resizeYInput = +resizeY.value;
+    var resizeSizeInput = +resizeSize.value;
 
     if (resizeSizeInput < 1 || resizeXInput < 0 || resizeYInput < 0) {
       resizeErrorMsg = 'Размеры рамки для кадрирования меньше допустимых';

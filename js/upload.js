@@ -43,6 +43,18 @@
   var currentResizer;
 
   /**
+   * Set default values for input fields
+   */
+  var setDefaultValues = function() {
+    var sideRatio = 0.75;
+    var shortSide = Math.min(currentResizer._image.naturalWidth, currentResizer._image.naturalHeight);
+
+    resizeSize.value = sideRatio * shortSide;
+    resizeX.value = (currentResizer._image.naturalWidth - resizeSize.value) / 2;
+    resizeY.value = (currentResizer._image.naturalHeight - resizeSize.value) / 2;
+  };
+
+  /**
    * Удаляет текущий объект {@link Resizer}, чтобы создать новый с другим
    * изображением.
    */
@@ -73,6 +85,21 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
+    var resizeXInput = +resizeX.value;
+    var resizeYInput = +resizeY.value;
+    var resizeSizeInput = +resizeSize.value;
+
+    if (resizeSizeInput < 1 || resizeXInput < 0 || resizeYInput < 0) {
+      resizeErrorMsg = 'Размеры рамки для кадрирования меньше допустимых';
+      return false;
+    } else if (resizeXInput + resizeSizeInput > currentResizer._image.naturalWidth) {
+      resizeErrorMsg = 'Рамка для кадрирования больше чем ширина изображения';
+      return false;
+    } else if (resizeYInput + resizeSizeInput > currentResizer._image.naturalHeight) {
+      resizeErrorMsg = 'Рамка для кадрирования больше чем высота изображения';
+      return false;
+    }
+
     return true;
   }
 
@@ -87,6 +114,12 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+
+  var resizeX = resizeForm['resize-x'];
+  var resizeY = resizeForm['resize-y'];
+  var resizeSize = resizeForm['resize-size'];
+  var resizeFormBtnFwd = resizeForm['resize-fwd'];
+  var resizeErrorMsg;
 
   /**
    * Форма добавления фильтра.
@@ -166,7 +199,7 @@
 
           uploadForm.classList.add('invisible');
           resizeForm.classList.remove('invisible');
-
+          setDefaultValues();
           hideMessage();
         };
 
@@ -207,6 +240,9 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+    } else {
+      resizeFormBtnFwd.disabled = true;
+      showMessage(Action.ERROR, resizeErrorMsg);
     }
   };
 

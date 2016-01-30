@@ -1,7 +1,7 @@
 /* global pictures: true */
 
 /**
- * @initializer of the photos' list
+ * @initializer of the photos' list.
  * @author Roman Baranov
  */
 
@@ -22,7 +22,17 @@
   var container = document.querySelector('.pictures');
 
   /**
-   * Hide elements on page, by adding 'hidden' class
+   * Image size
+   * @const
+   * @type {Object}
+   */
+  var IMG_SIZE = {
+    width: 182,
+    height: 182
+  };
+
+  /**
+   * Hide elements on page, by adding 'hidden' class.
    * @param {Array} arrEls
    */
   function hideEls(arrEls) {
@@ -36,7 +46,7 @@
   }
 
   /**
-   * Show elements on page, by removing 'hidden' class
+   * Show elements on page, by removing 'hidden' class.
    * @param {Array} arrEls
    */
   function showEls(arrEls) {
@@ -46,7 +56,7 @@
   }
 
   /**
-   * Create new page elements based on data from jsonp
+   * Create new page elements based on data from jsonp.
    * @param {Array} arrObjs
    */
   function createElsFromJsonp(arrObjs) {
@@ -57,7 +67,7 @@
   }
 
   /**
-   * Create DOM-elements based on template
+   * Create DOM-elements based on template.
    * @param {Object} data
    * @return {Element}
    */
@@ -73,6 +83,26 @@
 
     el.querySelector('.picture-likes').textContent = data.likes;
     el.querySelector('.picture-comments').textContent = data.comments;
+
+    var img = new Image();
+    img.src = data.url;
+    img.width = IMG_SIZE.width;
+    img.height = IMG_SIZE.height;
+
+    /**
+     * Event handler, to replace template's element by uploaded image.
+     */
+    img.onload = function() {
+      el.replaceChild(img, el.querySelector('img'));
+    };
+
+    /**
+     * Event handler, to add failure class in a case of error.
+     */
+    img.onerror = function() {
+      el.classList.add('picture-load-failure');
+    };
+
     return el;
   }
 

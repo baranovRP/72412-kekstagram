@@ -9,14 +9,73 @@
 
 (function() {
 
-  (function() {
-    var filtersNodes = Array.prototype.slice.call(document.querySelectorAll('.filters'));
+  /**
+   * Array, that contains nodes with class 'filters'.
+   * @type {Array}
+   */
+  var filtersNodes = Array.prototype.slice.call(document.querySelectorAll('.filters'));
 
-    filtersNodes.forEach(function(item) {
+  /**
+   * Container for pictures.
+   * @type {HtmlElement}
+   */
+  var container = document.querySelector('.pictures');
+
+  /**
+   * Hide elements on page, by adding 'hidden' class
+   * @param {Array} arrEls
+   */
+  function hideEls(arrEls) {
+    arrEls.forEach(function(item) {
+      var cssCls = 'hidden';
+
+      if (!item.classList.contains(cssCls)) {
+        item.classList.add(cssCls);
+      }
+    });
+  }
+
+  /**
+   * Show elements on page, by removing 'hidden' class
+   * @param {Array} arrEls
+   */
+  function showEls(arrEls) {
+    arrEls.forEach(function(item) {
       item.classList.remove('hidden');
     });
-  }());
+  }
 
+  /**
+   * Create new page elements based on data from jsonp
+   */
+  function createElsFromJsonp() {
+    pictures.forEach(function(picture) {
+      var el = getElFromTemplate(picture);
+      container.appendChild(el);
+    });
+  }
 
+  /**
+   * Create DOM-el based on template
+   * @param {Object} data
+   * @return {Element}
+   */
+  function getElFromTemplate(data) {
+    var template = document.querySelector('#picture-template');
+    var el;
 
+    if ('content' in template) {
+      el = template.content.children[0].cloneNode(true);
+    } else {
+      el = template.children[0].cloneNode(true);
+    }
+
+    el.querySelector('.picture-likes').textContent = data.likes;
+    el.querySelector('.picture-comments').textContent = data.comments;
+    return el;
+  }
+
+  hideEls(filtersNodes);
+  createElsFromJsonp();
+  showEls(filtersNodes);
 })();

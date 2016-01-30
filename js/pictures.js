@@ -47,16 +47,17 @@
 
   /**
    * Create new page elements based on data from jsonp
+   * @param {Array} arrObjs
    */
-  function createElsFromJsonp() {
-    pictures.forEach(function(picture) {
+  function createElsFromJsonp(arrObjs) {
+    arrObjs.forEach(function(picture) {
       var el = getElFromTemplate(picture);
       container.appendChild(el);
     });
   }
 
   /**
-   * Create DOM-el based on template
+   * Create DOM-elements based on template
    * @param {Object} data
    * @return {Element}
    */
@@ -76,6 +77,6 @@
   }
 
   hideEls(filtersNodes);
-  createElsFromJsonp();
+  createElsFromJsonp(pictures);
   showEls(filtersNodes);
 })();

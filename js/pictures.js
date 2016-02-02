@@ -1,3 +1,5 @@
+/* global pictures: true */
+
 /**
  * @initializer of the photos' list.
  * @author Roman Baranov
@@ -54,27 +56,14 @@
   }
 
   /**
-   * Create new page elements based on data from json.
-   * @param {Array.<Objects>} arrObjs
+   * Create new page elements based on data from jsonp.
+   * @param {Array} arrObjs
    */
-  function createElsFromJson(arrObjs) {
+  function createElsFromJsonp(arrObjs) {
     arrObjs.forEach(function(picture) {
       var el = getElFromTemplate(picture);
       container.appendChild(el);
     });
-  }
-
-  function getPictures() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'data/pictures.json');
-    xhr.onload = function(evt) {
-      var rawData = evt.target.response;
-      var loadedPictures = JSON.parse(rawData);
-
-      createElsFromJson(loadedPictures);
-    };
-
-    xhr.send();
   }
 
   /**
@@ -118,6 +107,6 @@
   }
 
   hideEls(filtersNodes);
-  getPictures();
+  createElsFromJsonp(pictures);
   showEls(filtersNodes);
 })();

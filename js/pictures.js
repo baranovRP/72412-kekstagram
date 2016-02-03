@@ -65,10 +65,13 @@
    * @param {Array.<Objects>} arrObjs
    */
   function createElsFromJson(arrObjs) {
+    var domFragment = document.createDocumentFragment();
     arrObjs.forEach(function(picture) {
       var el = getElFromTemplate(picture);
-      container.appendChild(el);
+      domFragment.appendChild(el);
     });
+
+    container.appendChild(domFragment);
   }
 
   /**

@@ -6,6 +6,15 @@
 'use strict';
 
 (function() {
+  /**
+   * Types of sort filters.
+   * @enum {String}
+   */
+  var SortFilter = {
+    POPULAR_F: 'filter-popular',
+    NEW_F: 'filter-new',
+    DISCUSSED_F: 'filter-discussed'
+  };
 
   /**
    * Array, that contains nodes with class 'filters'.
@@ -14,10 +23,28 @@
   var filtersNodes = Array.prototype.slice.call(document.querySelectorAll('.filters'));
 
   /**
+   * Array, that contains nodes with filters.
+   * @type {Array}
+   */
+  var filterItems = Array.prototype.slice.call(document.querySelectorAll('.filters-radio'));
+
+  /**
+   * Array, for saving initial order of pictures.
+   * @type {Array}
+   */
+  var pictures = [];
+
+  /**
    * Container for pictures.
    * @type {HtmlElement}
    */
   var container = document.querySelector('.pictures');
+
+  /**
+   * Variable for saving current active filter.
+   * @type {String}
+   */
+  var activeFilter = SortFilter.POPULAR_F;
 
   /**
    * Image size
@@ -64,7 +91,10 @@
    * Create new page elements based on data from json.
    * @param {Array.<Objects>} arrObjs
    */
-  function createElsFromJson(arrObjs) {
+  function renderEls(arrObjs) {
+    hideEls(filtersNodes);
+    container.innerHTML = '';
+
     var domFragment = document.createDocumentFragment();
     arrObjs.forEach(function(picture) {
       var el = getElFromTemplate(picture);
@@ -72,6 +102,7 @@
     });
 
     container.appendChild(domFragment);
+    showEls(filtersNodes);
   }
 
   /**
@@ -87,14 +118,14 @@
 
     xhr.onload = function(evt) {
       var rawData = evt.target.response;
-      var loadedPictures = JSON.parse(rawData);
+      pictures = JSON.parse(rawData);
 
-      createElsFromJson(loadedPictures);
+      renderEls(pictures);
       container.classList.remove('pictures-loading');
     };
 
     /**
-     * Event handler, remove loading mask and add failure class in a case of error.
+     * Event handler, remove loading mask and add failure mask in a case of error.
      */
     var handleError = function() {
       if (container.classList.contains('pictures-loading')) {
@@ -159,7 +190,55 @@
     return el;
   }
 
-  hideEls(filtersNodes);
+  /**
+   * Add click event handlers for each sort filter.
+   * @param {Array.<Objects>} arrEls
+   */
+  function addClickHandler(arrEls) {
+    arrEls.forEach(function(item) {
+      item.onclick = function(evt) {
+        var clickedElId = evt.target.id;
+        setActiveFilter(clickedElId);
+      };
+    });
+  }
+
+  /**
+   * Set chosen filter ans sort pictures according to filter.
+   * @param {String} id
+   */
+  function setActiveFilter(id) {
+    if (activeFilter === id) {
+      return;
+    }
+
+    activeFilter = id;
+    document.getElementById(activeFilter).checked = false;
+    document.getElementById(id).checked = true;
+
+    var filteredPictures = pictures.slice(0);
+
+    switch (id) {
+      case SortFilter.POPULAR_F:
+        filteredPictures = pictures;
+        break;
+      case SortFilter.NEW_F:
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+        break;
+      case SortFilter.DISCUSSED_F:
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return b.comments - a.comments;
+        });
+        break;
+      default:
+        throw new Error('Unexpected id name: ' + id);
+    }
+
+    renderEls(filteredPictures);
+  }
+
+  addClickHandler(filterItems);
   getPictures();
-  showEls(filtersNodes);
 })();

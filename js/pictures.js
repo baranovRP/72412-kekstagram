@@ -30,6 +30,13 @@
   };
 
   /**
+   * Load timeout
+   * @const
+   * @type {number}
+   */
+  var LOAD_TIMEOUT = 10000;
+
+  /**
    * Hide elements on page, by adding 'hidden' class.
    * @param {Array} arrEls
    */
@@ -64,15 +71,37 @@
     });
   }
 
+  /**
+   * Retrieve pictures data from json.
+   */
   function getPictures() {
     var xhr = new XMLHttpRequest();
+
+    xhr.timeout = LOAD_TIMEOUT;
     xhr.open('GET', 'data/pictures.json');
+
+    container.classList.add('pictures-loading');
+
     xhr.onload = function(evt) {
       var rawData = evt.target.response;
       var loadedPictures = JSON.parse(rawData);
 
       createElsFromJson(loadedPictures);
+      container.classList.remove('pictures-loading');
     };
+
+    /**
+     * Event handler, remove loading mask and add failure class in a case of error.
+     */
+    var handleError = function() {
+      if (container.classList.contains('pictures-loading')) {
+        container.classList.remove('pictures-loading');
+      }
+      container.classList.add('pictures-failure');
+    };
+
+    xhr.onerror = handleError;
+    xhr.ontimeout = handleError;
 
     xhr.send();
   }
@@ -104,6 +133,7 @@
      * Event handler, to replace template's element by uploaded image.
      */
     img.onload = function() {
+      clearTimeout(pictureLoadTimeout);
       el.replaceChild(img, el.querySelector('img'));
     };
 
@@ -113,6 +143,15 @@
     img.onerror = function() {
       el.classList.add('picture-load-failure');
     };
+
+    /**
+     * Create timeout.
+     * @type {Object}
+     */
+    var pictureLoadTimeout = setTimeout(function() {
+      img.src = '';
+      el.classList.add('picture-load-failure');
+    }, LOAD_TIMEOUT);
 
     return el;
   }

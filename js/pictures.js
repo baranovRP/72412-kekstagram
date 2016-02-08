@@ -64,6 +64,13 @@
   var LOAD_TIMEOUT = 10000;
 
   /**
+   * Days age
+   * @const
+   * @type {number}
+   */
+  var DAYS_AGO = 14;
+
+  /**
    * Hide elements on page, by adding 'hidden' class.
    * @param {Array} arrEls
    */
@@ -222,16 +229,36 @@
       case SortFilter.POPULAR_F:
         filteredPictures = pictures;
         break;
+
       case SortFilter.NEW_F:
-        filteredPictures = filteredPictures.sort(function(a, b) {
+        var sortedByDate = filteredPictures.sort(function(a, b) {
           return new Date(b.date).getTime() - new Date(a.date).getTime();
         });
+
+        /**
+         * Convert days into millisecs.
+         * @param {number} days
+         */
+        var convertDaysToMsec = function(days) {
+          return days * 24 * 60 * 60 * 1000;
+        };
+
+        filteredPictures = sortedByDate.filter(function(el) {
+
+          var daysAgoInMsec = function(days) {
+            return +Date.now() - convertDaysToMsec(days);
+          };
+
+          return new Date(el.date).getTime() - daysAgoInMsec(DAYS_AGO) >= 0;
+        });
         break;
+
       case SortFilter.DISCUSSED_F:
         filteredPictures = filteredPictures.sort(function(a, b) {
           return b.comments - a.comments;
         });
         break;
+
       default:
         throw new Error('Unexpected id name: ' + id);
     }

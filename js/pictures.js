@@ -207,9 +207,9 @@
     var el;
 
     if ('content' in template) {
-      el = template.content.children[0].cloneNode(true);
+      el = template.content.childNodes[1].cloneNode(true);
     } else {
-      el = template.children[0].cloneNode(true);
+      el = template.childNodes[1].cloneNode(true);
     }
 
     el.querySelector('.picture-likes').textContent = data.likes;

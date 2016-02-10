@@ -49,9 +49,9 @@
     var sideRatio = 0.75;
     var shortSide = Math.min(currentResizer._image.naturalWidth, currentResizer._image.naturalHeight);
 
-    resizeSize.value = sideRatio * shortSide;
-    resizeX.value = (currentResizer._image.naturalWidth - resizeSize.value) / 2;
-    resizeY.value = (currentResizer._image.naturalHeight - resizeSize.value) / 2;
+    resizeSize.value = Math.ceil(sideRatio * shortSide);
+    resizeX.value = Math.ceil((currentResizer._image.naturalWidth - resizeSize.value) / 2);
+    resizeY.value = Math.ceil((currentResizer._image.naturalHeight - resizeSize.value) / 2);
   };
 
   /**

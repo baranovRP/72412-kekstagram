@@ -335,6 +335,30 @@
     filterImage.className = 'filter-image-preview ' + filterMap[selectedFilter];
   });
 
+  /**
+   * Event handler, change input's values by changing the image position.
+   */
+  window.addEventListener('resizerchange', function(evt) {
+    evt.preventDefault();
+
+    resizeX.value = currentResizer.getConstraint().x;
+    resizeY.value = currentResizer.getConstraint().y;
+    resizeSize.value = currentResizer.getConstraint().side;
+  });
+
+  /**
+   * Event handler, change image position by changing input's values.
+   */
+  resizeForm.addEventListener('change', function(evt) {
+    evt.preventDefault();
+
+    var currentX = resizeX.value;
+    var currentY = resizeY.value;
+    var currentSize = resizeSize.value;
+
+    currentResizer.setConstraint(currentX, currentY, currentSize);
+  });
+
   restoreFilterFromCookie();
   cleanupResizer();
   updateBackground();

@@ -119,7 +119,7 @@
     var xhr = new XMLHttpRequest();
 
     xhr.timeout = LOAD_TIMEOUT;
-    xhr.open('GET', 'data/pictures.json');
+    xhr.open('GET', '//o0.github.io/assets/json/pictures.json');
 
     container.classList.add('pictures-loading');
 

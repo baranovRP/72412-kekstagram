@@ -272,7 +272,11 @@
    * Restore filter state from cookies
    */
   function restoreFilterFromCookie() {
-    document.getElementById(docCookies.getItem(filterCookie)).checked = true;
+    var filterEl = document.getElementById(docCookies.getItem(filterCookie));
+
+    if (filterEl) {
+      filterEl.checked = true;
+    }
   }
 
   /**

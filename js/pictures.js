@@ -1,4 +1,4 @@
-/* global Photo: true */
+/* global Photo: true, Gallery: true */
 
 /**
  * @initializer of the photos' list.
@@ -47,6 +47,8 @@
    * @type {HtmlElement}
    */
   var container = document.querySelector('.pictures');
+
+  var gallery = new Gallery();
 
   /**
    * Variable for saving current active filter.
@@ -127,10 +129,17 @@
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
+
+      photoEl.el.addEventListener('click', _onPhotoClick);
     });
 
     container.appendChild(domFragment);
     showEls(filtersNodes);
+  }
+
+  function _onPhotoClick(evt) {
+    evt.preventDefault();
+    gallery.show();
   }
 
   /**

@@ -40,17 +40,17 @@
     /**
      * Event handler, to replace template's element by uploaded image.
      */
-    img.onload = function() {
+    img.addEventListener('load', function() {
       clearTimeout(pictureLoadTimeout);
       this.el.replaceChild(img, this.el.querySelector('img'));
-    }.bind(this);
+    }.bind(this));
 
     /**
      * Event handler, to add failure class in a case of error.
      */
-    img.onerror = function() {
+    img.addEventListener('error', function() {
       this.el.classList.add('picture-load-failure');
-    }.bind(this);
+    }.bind(this));
 
     /**
      * Create timeout.

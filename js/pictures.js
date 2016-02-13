@@ -112,7 +112,10 @@
   function renderEls(arrObjs, pageNumber, replace) {
     hideEls(filtersNodes);
     if (replace) {
-      container.innerHTML = '';
+      var allPictures = document.querySelectorAll('.picture');
+      Array.prototype.forEach.call(allPictures, function(picture) {
+        container.removeChild(picture);
+      });
     }
 
     var firstPicture = pageNumber * PAGE_SIZE;

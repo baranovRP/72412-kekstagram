@@ -14,7 +14,7 @@
   function Gallery() {
     this.el = document.querySelector('.gallery-overlay');
     this._closeButton = document.querySelector('.gallery-overlay-close');
-    this.photo = document.querySelector('.gallery-overlay-image');
+    this._photo = document.querySelector('.gallery-overlay-image');
 
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
@@ -28,7 +28,7 @@
   Gallery.prototype.show = function() {
     this.el.classList.remove('invisible');
 
-    this.photo.addEventListener('click', this._onPhotoClick);
+    this._photo.addEventListener('click', this._onPhotoClick);
 
     document.addEventListener('keydown', this._onDocumentKeyDown);
     this.el.addEventListener('click', this._onOverlayClick);
@@ -41,7 +41,7 @@
   Gallery.prototype.hide = function() {
     this.el.classList.add('invisible');
 
-    this.photo.addEventListener('click', this._onPhotoClick);
+    this._photo.addEventListener('click', this._onPhotoClick);
 
     document.removeEventListener('keydown', this._onDocumentKeyDown);
     this.el.removeEventListener('click', this._onOverlayClick);

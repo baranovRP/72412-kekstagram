@@ -5,13 +5,8 @@
 'use strict';
 
 (function() {
-  /**
-   * @param {Object} data
-   * @constructor
-   */
-  function Photo(data) {
-    this._data = data;
-  }
+
+  var template = document.querySelector('#picture-template');
 
   var IMG_SIZE = {
     width: 182,
@@ -20,9 +15,18 @@
 
   var LOAD_TIMEOUT_MS = 10000;
 
-  Photo.prototype.render = function() {
-    var template = document.querySelector('#picture-template');
+  /**
+   * @param {Object} data
+   * @constructor
+   */
+  function Photo(data) {
+    this._data = data;
+  }
 
+  /**
+   * Create DOM-elements based on template.
+   */
+  Photo.prototype.render = function() {
     if ('content' in template) {
       this.el = template.content.childNodes[1].cloneNode(true);
     } else {

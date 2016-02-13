@@ -116,6 +116,7 @@
     if (replace) {
       var allPictures = document.querySelectorAll('.picture');
       Array.prototype.forEach.call(allPictures, function(picture) {
+        picture.removeEventListener('click', _onPictureClick);
         container.removeChild(picture);
       });
     }

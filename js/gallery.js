@@ -14,8 +14,10 @@
   function Gallery() {
     this.el = document.querySelector('.gallery-overlay');
     this._closeButton = document.querySelector('.gallery-overlay-close');
+    this.photo = document.querySelector('.gallery-overlay-image');
 
-    this._onEscPress = this._onEscPress.bind(this);
+    this._onPhotoClick = this._onPhotoClick.bind(this);
+    this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
     this._onCloseClick = this._onCloseClick.bind(this);
   }
@@ -26,7 +28,9 @@
   Gallery.prototype.show = function() {
     this.el.classList.remove('invisible');
 
-    window.addEventListener('keydown', this._onEscPress);
+    this.photo.addEventListener('click', this._onPhotoClick);
+
+    document.addEventListener('keydown', this._onDocumentKeyDown);
     this.el.addEventListener('click', this._onOverlayClick);
     this._closeButton.addEventListener('click', this._onCloseClick);
   };
@@ -37,7 +41,9 @@
   Gallery.prototype.hide = function() {
     this.el.classList.add('invisible');
 
-    window.removeEventListener('keydown', this._onEscPress);
+    this.photo.addEventListener('click', this._onPhotoClick);
+
+    document.removeEventListener('keydown', this._onDocumentKeyDown);
     this.el.removeEventListener('click', this._onOverlayClick);
     this._closeButton.removeEventListener('click', this._onCloseClick);
 
@@ -46,7 +52,7 @@
   /**
    * Event handler, close gallery by pressing on 'Esc' button.
    */
-  Gallery.prototype._onEscPress = function(evt) {
+  Gallery.prototype._onDocumentKeyDown = function(evt) {
     if (evt.keyCode === VK_ESCAPE) {
       evt.preventDefault();
       this.hide();
@@ -71,6 +77,16 @@
   Gallery.prototype._onCloseClick = function(evt) {
     evt.preventDefault();
     this.hide();
+  };
+
+  /**
+   * Event handler, click on photo.
+   * @private
+   */
+  Gallery.prototype._onPhotoClick = function(evt) {
+    evt.preventDefault();
+    //  stub for next task
+    console.log('click on photo');
   };
 
   window.Gallery = Gallery;

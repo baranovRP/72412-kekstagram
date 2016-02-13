@@ -130,14 +130,14 @@
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 
-      photoEl.el.addEventListener('click', _onPhotoClick);
+      photoEl.el.addEventListener('click', _onPictureClick);
     });
 
     container.appendChild(domFragment);
     showEls(filtersNodes);
   }
 
-  function _onPhotoClick(evt) {
+  function _onPictureClick(evt) {
     evt.preventDefault();
     gallery.show();
   }

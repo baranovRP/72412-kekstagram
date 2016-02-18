@@ -66,5 +66,24 @@
     }.bind(this), LOAD_TIMEOUT_MS);
   };
 
+  /**
+   * Event handler, click on picture
+   * @param {Event} evt
+   * @private
+   */
+  Photo.prototype._onClick = function(evt) {
+    if (evt.target.classList.contains('picture')
+      && !evt.classList.contains('picture-load-failure')) {
+      if (typeof this.onClick === 'function') {
+        this.onClick();
+      }
+    }
+  };
+
+  /**
+   * @type {?Function}
+   */
+  Photo.prototype.onClick = null;
+
   window.Photo = Photo;
 })();

@@ -12,9 +12,13 @@
    * @constructor
    */
   function Gallery() {
+    this._currentIdx = 0;
+
     this.el = document.querySelector('.gallery-overlay');
-    this._closeButton = document.querySelector('.gallery-overlay-close');
-    this._photo = document.querySelector('.gallery-overlay-image');
+    this._closeButton = this.el.querySelector('.gallery-overlay-close');
+    this._photo = this.el.querySelector('.gallery-overlay-image');
+    this._photoLikes = this.el.querySelector('.gallery-overlay-controls-like');
+    this._photoComments = this.el.querySelector('.gallery-overlay-controls-comments');
 
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
@@ -47,6 +51,31 @@
     this.el.removeEventListener('click', this._onOverlayClick);
     this._closeButton.removeEventListener('click', this._onCloseClick);
 
+  };
+
+  /**
+   * Save array of pictures
+   * @method
+   * @param {Array.<Object>} data
+   */
+  Gallery.prototype.setPictures = function(data) {
+    this._data = data;
+  };
+
+  /**
+   * Take and set picture from array by index
+   * @method
+   * @param {number} idx
+   */
+  Gallery.prototype.setCurrentPicture = function(idx) {
+    if (idx < 0 || idx > this._data.length - 1) {
+      return;
+    }
+    var currentPhoto = this._data[idx];
+    this._photo.src = currentPhoto.url;
+    this._photoLikes = currentPhoto.likes;
+    this._photoComments = currentPhoto.comments;
+    this._currentIdx = idx;
   };
 
   /**
@@ -85,9 +114,15 @@
    */
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
-    //  stub for next task
-    console.log('click on photo');
+    var index = this._currentIdx + 1;
+    if (index > this._data.length - 2) {
+      return;
+    }
+    this.setCurrentPicture(index + 1);
   };
 
+  /**
+   * @type {Gallery}
+   */
   window.Gallery = Gallery;
 })();

@@ -36,6 +36,8 @@
    */
   var pictures = [];
 
+  var renderedEls = [];
+
   /**
    * Array, for saving filtered/sorted order of pictures.
    * @type {Array}
@@ -114,33 +116,36 @@
   function renderEls(arrObjs, pageNumber, replace) {
     hideEls(filtersNodes);
     if (replace) {
-      var allPictures = document.querySelectorAll('.picture');
-      Array.prototype.forEach.call(allPictures, function(picture) {
-        picture.removeEventListener('click', _onPictureClick);
-        container.removeChild(picture);
-      });
+      var el;
+      while ((el = renderedEls.shift())) {
+        container.removeChild(el.el);
+        el.onClick = null;
+        el.remove();
+      }
     }
+
+    gallery.setPictures(arrObjs);
 
     var firstPicture = pageNumber * PAGE_SIZE;
     var lastPicture = firstPicture + PAGE_SIZE;
     var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
 
     var domFragment = document.createDocumentFragment();
-    picturesOnPage.forEach(function(picture) {
+    renderedEls = renderedEls.concat(picturesOnPage.map(function(picture, index) {
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 
-      photoEl.el.addEventListener('click', _onPictureClick);
-    });
+      photoEl.onClick = function() {
+        var currentPosition = index + firstPicture;
+        gallery.data = photoEl._data;
+        gallery.setCurrentPicture(currentPosition);
+        gallery.show();
+      };
+    }));
 
     container.appendChild(domFragment);
     showEls(filtersNodes);
-  }
-
-  function _onPictureClick(evt) {
-    evt.preventDefault();
-    gallery.show();
   }
 
   /**

@@ -41,7 +41,7 @@
   Gallery.prototype.hide = function() {
     this.el.classList.add('invisible');
 
-    this._photo.addEventListener('click', this._onPhotoClick);
+    this._photo.removeEventListener('click', this._onPhotoClick);
 
     document.removeEventListener('keydown', this._onDocumentKeyDown);
     this.el.removeEventListener('click', this._onOverlayClick);

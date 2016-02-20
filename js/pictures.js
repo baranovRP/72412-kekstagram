@@ -1,3 +1,5 @@
+/* global Photo: true */
+
 /**
  * @initializer of the photos' list.
  * @author Roman Baranov
@@ -51,16 +53,6 @@
    * @type {String}
    */
   var activeFilter = SortFilter.POPULAR_F;
-
-  /**
-   * Image size
-   * @const
-   * @type {Object}
-   */
-  var IMG_SIZE = {
-    width: 182,
-    height: 182
-  };
 
   /**
    * Load timeout
@@ -120,7 +112,10 @@
   function renderEls(arrObjs, pageNumber, replace) {
     hideEls(filtersNodes);
     if (replace) {
-      container.innerHTML = '';
+      var allPictures = document.querySelectorAll('.picture');
+      Array.prototype.forEach.call(allPictures, function(picture) {
+        container.removeChild(picture);
+      });
     }
 
     var firstPicture = pageNumber * PAGE_SIZE;
@@ -129,8 +124,9 @@
 
     var domFragment = document.createDocumentFragment();
     picturesOnPage.forEach(function(picture) {
-      var el = getElFromTemplate(picture);
-      domFragment.appendChild(el);
+      var photoEl = new Photo(picture);
+      photoEl.render();
+      domFragment.appendChild(photoEl.el);
     });
 
     container.appendChild(domFragment);
@@ -195,56 +191,6 @@
     xhr.ontimeout = handleError;
 
     xhr.send();
-  }
-
-  /**
-   * Create DOM-elements based on template.
-   * @param {Object} data
-   * @return {Element}
-   */
-  function getElFromTemplate(data) {
-    var template = document.querySelector('#picture-template');
-    var el;
-
-    if ('content' in template) {
-      el = template.content.childNodes[1].cloneNode(true);
-    } else {
-      el = template.childNodes[1].cloneNode(true);
-    }
-
-    el.querySelector('.picture-likes').textContent = data.likes;
-    el.querySelector('.picture-comments').textContent = data.comments;
-
-    var img = new Image();
-    img.src = data.url;
-    img.width = IMG_SIZE.width;
-    img.height = IMG_SIZE.height;
-
-    /**
-     * Event handler, to replace template's element by uploaded image.
-     */
-    img.onload = function() {
-      clearTimeout(pictureLoadTimeout);
-      el.replaceChild(img, el.querySelector('img'));
-    };
-
-    /**
-     * Event handler, to add failure class in a case of error.
-     */
-    img.onerror = function() {
-      el.classList.add('picture-load-failure');
-    };
-
-    /**
-     * Create timeout.
-     * @type {Object}
-     */
-    var pictureLoadTimeout = setTimeout(function() {
-      img.src = '';
-      el.classList.add('picture-load-failure');
-    }, LOAD_TIMEOUT);
-
-    return el;
   }
 
   /**

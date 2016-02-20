@@ -1,4 +1,4 @@
-/* global Photo: true */
+/* global Photo: true, Gallery: true */
 
 /**
  * @initializer of the photos' list.
@@ -47,6 +47,8 @@
    * @type {HtmlElement}
    */
   var container = document.querySelector('.pictures');
+
+  var gallery = new Gallery();
 
   /**
    * Variable for saving current active filter.
@@ -114,6 +116,7 @@
     if (replace) {
       var allPictures = document.querySelectorAll('.picture');
       Array.prototype.forEach.call(allPictures, function(picture) {
+        picture.removeEventListener('click', _onPictureClick);
         container.removeChild(picture);
       });
     }
@@ -127,10 +130,17 @@
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
+
+      photoEl.el.addEventListener('click', _onPictureClick);
     });
 
     container.appendChild(domFragment);
     showEls(filtersNodes);
+  }
+
+  function _onPictureClick(evt) {
+    evt.preventDefault();
+    gallery.show();
   }
 
   /**

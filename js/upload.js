@@ -356,9 +356,9 @@
   resizeForm.addEventListener('change', function(evt) {
     evt.preventDefault();
 
-    var currentX = resizeX.value;
-    var currentY = resizeY.value;
-    var currentSize = resizeSize.value;
+    var currentX = +resizeX.value;
+    var currentY = +resizeY.value;
+    var currentSize = +resizeSize.value;
 
     currentResizer.setConstraint(currentX, currentY, currentSize);
   });

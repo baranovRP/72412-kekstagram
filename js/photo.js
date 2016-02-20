@@ -79,6 +79,8 @@
    * @private
    */
   Photo.prototype._onClick = function(evt) {
+    evt.preventDefault();
+
     if (evt.target.parentNode.classList.contains('picture')
       && !evt.target.parentNode.classList.contains('picture-load-failure')) {
       if (typeof this.onClick === 'function') {

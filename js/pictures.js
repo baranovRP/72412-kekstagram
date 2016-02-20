@@ -124,26 +124,26 @@
       }
     }
 
-    gallery.setPictures(arrObjs);
-
     var firstPicture = pageNumber * PAGE_SIZE;
     var lastPicture = firstPicture + PAGE_SIZE;
     var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
-
     var domFragment = document.createDocumentFragment();
-    renderedEls = renderedEls.concat(picturesOnPage.map(function(picture, index) {
+
+    picturesOnPage.map(function(picture, index) {
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 
       photoEl.onClick = function() {
         var currentPosition = index + firstPicture;
-        gallery.data = photoEl._data;
         gallery.setCurrentPicture(currentPosition);
         gallery.show();
       };
-    }));
 
+      renderedEls.push(photoEl);
+    });
+
+    gallery.setPictures(renderedEls);
     container.appendChild(domFragment);
     showEls(filtersNodes);
   }

@@ -72,7 +72,7 @@
     if (idx < 0 || idx > this._data.length - 1) {
       return;
     }
-    var currentPhoto = this._data[idx];
+    var currentPhoto = this._data[idx]._data;
     this._photo.src = currentPhoto.url;
     this._photoLikes = currentPhoto.likes;
     this._photoComments = currentPhoto.comments;

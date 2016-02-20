@@ -165,7 +165,9 @@
   /**
    * Event handler, set delay for scrolling.
    */
-  window.addEventListener('scroll', function() {
+  window.addEventListener('scroll', function(evt) {
+    evt.preventDefault();
+
     var delayMsec = 100;
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(renderElsIfRequired(filteredPictures), delayMsec);
@@ -183,6 +185,8 @@
     container.classList.add('pictures-loading');
 
     xhr.onload = function(evt) {
+      evt.preventDefault();
+
       var rawData = evt.target.response;
       pictures = JSON.parse(rawData);
       filteredPictures = pictures.slice(0);
@@ -195,7 +199,9 @@
     /**
      * Event handler, remove loading mask and add failure mask in a case of error.
      */
-    var handleError = function() {
+    var handleError = function(evt) {
+      evt.preventDefault();
+
       if (container.classList.contains('pictures-loading')) {
         container.classList.remove('pictures-loading');
       }
@@ -213,6 +219,8 @@
    * @param {HTMLElement} el
    */
   filters.addEventListener('click', function(evt) {
+    evt.preventDefault();
+
     var clickeEl = evt.target;
     if (clickeEl.classList.contains('filters-item')) {
       setActiveFilter(clickeEl.previousElementSibling.id);

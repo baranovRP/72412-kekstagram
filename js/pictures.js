@@ -23,16 +23,22 @@
   var filtersNodes = Array.prototype.slice.call(document.querySelectorAll('.filters'));
 
   /**
-   * Array, that contains nodes with filters.
-   * @type {Array}
+   * HTMElement, that contains node with class 'filters'.
+   * @type {HTMLElement}
    */
-  var filterItems = Array.prototype.slice.call(document.querySelectorAll('.filters-radio'));
+  var filters = document.querySelector('.filters');
 
   /**
    * Array, for saving initial order of pictures.
    * @type {Array}
    */
   var pictures = [];
+
+  /**
+   * Array, for saving filtered/sorted order of pictures.
+   * @type {Array}
+   */
+  var filteredPictures = [];
 
   /**
    * Container for pictures.
@@ -63,12 +69,23 @@
    */
   var LOAD_TIMEOUT = 10000;
 
+  var scrollTimeout;
+
   /**
    * Days age
    * @const
    * @type {number}
    */
   var DAYS_AGO = 14;
+
+  /**
+   * Pictures on page
+   * @const
+   * @type {number}
+   */
+  var PAGE_SIZE = 12;
+
+  var currentPage = 0;
 
   /**
    * Hide elements on page, by adding 'hidden' class.
@@ -97,13 +114,21 @@
   /**
    * Create new page elements based on data from json.
    * @param {Array.<Objects>} arrObjs
+   * @param {number} pageNumber
+   * @param {boolean} replace
    */
-  function renderEls(arrObjs) {
+  function renderEls(arrObjs, pageNumber, replace) {
     hideEls(filtersNodes);
-    container.innerHTML = '';
+    if (replace) {
+      container.innerHTML = '';
+    }
+
+    var firstPicture = pageNumber * PAGE_SIZE;
+    var lastPicture = firstPicture + PAGE_SIZE;
+    var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
 
     var domFragment = document.createDocumentFragment();
-    arrObjs.forEach(function(picture) {
+    picturesOnPage.forEach(function(picture) {
       var el = getElFromTemplate(picture);
       domFragment.appendChild(el);
     });
@@ -111,6 +136,29 @@
     container.appendChild(domFragment);
     showEls(filtersNodes);
   }
+
+  /**
+   * Check that that pictures filled the whole page.
+   * @param {Array.<Objects>} arrObjs
+   */
+  function renderElsIfRequired(arrObjs) {
+    var containerHeight = container.getBoundingClientRect().bottom;
+
+    if (containerHeight <= window.innerHeight) {
+      if (currentPage < Math.ceil(arrObjs.length / PAGE_SIZE)) {
+        renderEls(arrObjs, ++currentPage);
+      }
+    }
+  }
+
+  /**
+   * Event handler, set delay for scrolling.
+   */
+  window.addEventListener('scroll', function() {
+    var delayMsec = 100;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(renderElsIfRequired(filteredPictures), delayMsec);
+  });
 
   /**
    * Retrieve pictures data from json.
@@ -126,8 +174,10 @@
     xhr.onload = function(evt) {
       var rawData = evt.target.response;
       pictures = JSON.parse(rawData);
+      filteredPictures = pictures.slice(0);
 
-      renderEls(pictures);
+      renderEls(pictures, currentPage);
+      renderElsIfRequired(filteredPictures);
       container.classList.remove('pictures-loading');
     };
 
@@ -157,9 +207,9 @@
     var el;
 
     if ('content' in template) {
-      el = template.content.children[0].cloneNode(true);
+      el = template.content.childNodes[1].cloneNode(true);
     } else {
-      el = template.children[0].cloneNode(true);
+      el = template.childNodes[1].cloneNode(true);
     }
 
     el.querySelector('.picture-likes').textContent = data.likes;
@@ -199,16 +249,14 @@
 
   /**
    * Add click event handlers for each sort filter.
-   * @param {Array.<Objects>} arrEls
+   * @param {HTMLElement} el
    */
-  function addClickHandler(arrEls) {
-    arrEls.forEach(function(item) {
-      item.onclick = function(evt) {
-        var clickedElId = evt.target.id;
-        setActiveFilter(clickedElId);
-      };
-    });
-  }
+  filters.addEventListener('click', function(evt) {
+    var clickeEl = evt.target;
+    if (clickeEl.classList.contains('filters-item')) {
+      setActiveFilter(clickeEl.previousElementSibling.id);
+    }
+  });
 
   /**
    * Set chosen filter ans sort pictures according to filter.
@@ -223,7 +271,7 @@
     document.getElementById(activeFilter).checked = false;
     document.getElementById(id).checked = true;
 
-    var filteredPictures = pictures.slice(0);
+    filteredPictures = pictures.slice(0);
 
     switch (id) {
       case SortFilter.POPULAR_F:
@@ -263,9 +311,10 @@
         throw new Error('Unexpected id name: ' + id);
     }
 
-    renderEls(filteredPictures);
+    currentPage = 0;
+    renderEls(filteredPictures, currentPage, true);
+    renderElsIfRequired(filteredPictures);
   }
 
-  addClickHandler(filterItems);
   getPictures();
 })();

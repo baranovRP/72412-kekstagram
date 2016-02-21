@@ -5,8 +5,24 @@
 'use strict';
 
 (function() {
+  /**
+   * Types of key event codes.
+   * @enum {number}
+   */
+  var KeyEvent = {
+    VK_ESCAPE: 27,
+    VK_KP_RIGHT: 39,
+    VK_KP_LEFT: 37
+  };
 
-  var VK_ESCAPE = 27;
+  /**
+   * Types direction show pictures
+   * @enum {number}
+   */
+  var Direction = {
+    NEXT: 1,
+    PREV: -1
+  };
 
   /**
    * @constructor
@@ -75,11 +91,6 @@
     this._currentIdx = idx;
     var currentPhoto = this._data[this._currentIdx];
 
-    if (currentPhoto.url === 'failed.jpg') {
-      this._currentIdx++;
-      currentPhoto = this._data[this._currentIdx];
-    }
-
     if (!currentPhoto) {
       return;
     }
@@ -92,9 +103,20 @@
    * Event handler, close gallery by pressing on 'Esc' button.
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
-    if (evt.keyCode === VK_ESCAPE) {
-      evt.preventDefault();
-      this.hide();
+    evt.preventDefault();
+
+    switch (evt.keyCode) {
+      case KeyEvent.VK_ESCAPE:
+        this.hide();
+        break;
+      case KeyEvent.VK_KP_RIGHT:
+        this._showPicture(Direction.NEXT);
+        break;
+      case KeyEvent.VK_KP_LEFT:
+        this._showPicture(Direction.PREV);
+        break;
+      default:
+        break;
     }
   };
 
@@ -119,17 +141,24 @@
   };
 
   /**
+   * Show picture, next/prev depends on direction
+   * @private
+   * @param{number} direction
+   */
+  Gallery.prototype._showPicture = function(direction) {
+    var index = this._currentIdx + direction;
+    if (this._data[index]) {
+      this.setCurrentPicture(index);
+    }
+  };
+
+  /**
    * Event handler, click on photo.
    * @private
    */
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
-    var index = this._currentIdx + 1;
-    if (index > this._data.length - 1) {
-      return;
-    }
-
-    this.setCurrentPicture(index);
+    this._showPicture(Direction.NEXT);
   };
 
   /**

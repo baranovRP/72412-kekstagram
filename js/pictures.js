@@ -124,6 +124,8 @@
       }
     }
 
+    gallery.setPictures(arrObjs);
+
     var firstPicture = pageNumber * PAGE_SIZE;
     var lastPicture = firstPicture + PAGE_SIZE;
     var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
@@ -143,7 +145,6 @@
       renderedEls.push(photoEl);
     });
 
-    gallery.setPictures(renderedEls);
     container.appendChild(domFragment);
     showEls(filtersNodes);
   }

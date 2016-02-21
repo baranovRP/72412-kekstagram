@@ -17,8 +17,8 @@
     this.el = document.querySelector('.gallery-overlay');
     this._closeButton = this.el.querySelector('.gallery-overlay-close');
     this._photo = this.el.querySelector('.gallery-overlay-image');
-    this._photoLikes = this.el.querySelector('.gallery-overlay-controls-like');
-    this._photoComments = this.el.querySelector('.gallery-overlay-controls-comments');
+    this._photoLikes = this.el.querySelector('.gallery-overlay-controls-like .likes-count');
+    this._photoComments = this.el.querySelector('.gallery-overlay-controls-comments .comments-count');
 
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
@@ -84,8 +84,8 @@
       return;
     }
     this._photo.src = currentPhoto._data.url;
-    this._photoLikes = currentPhoto._data.likes;
-    this._photoComments = currentPhoto._data.comments;
+    this._photoLikes.innerHTML = currentPhoto._data.likes;
+    this._photoComments.innerHTML = currentPhoto._data.comments;
   };
 
   /**

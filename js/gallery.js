@@ -72,11 +72,17 @@
     if (idx < 0 || idx > this._data.length - 1) {
       return;
     }
-    var currentPhoto = this._data[idx]._data;
+    this._currentIdx = idx;
+
+    if (this._data[this._currentIdx].el.classList.contains('picture-load-failure')) {
+      this._currentIdx++;
+    }
+
+    var currentPhoto = this._data[this._currentIdx]._data;
+
     this._photo.src = currentPhoto.url;
     this._photoLikes = currentPhoto.likes;
     this._photoComments = currentPhoto.comments;
-    this._currentIdx = idx;
   };
 
   /**
@@ -116,10 +122,11 @@
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
     var index = this._currentIdx + 1;
-    if (index > this._data.length - 2) {
+    if (index > this._data.length - 1) {
       return;
     }
-    this.setCurrentPicture(index + 1);
+
+    this.setCurrentPicture(index);
   };
 
   /**

@@ -73,16 +73,19 @@
       return;
     }
     this._currentIdx = idx;
+    var currentPhoto = this._data[this._currentIdx];
 
-    if (this._data[this._currentIdx].el.classList.contains('picture-load-failure')) {
+    if (currentPhoto.el.classList.contains('picture-load-failure')) {
       this._currentIdx++;
+      currentPhoto = this._data[this._currentIdx];
     }
 
-    var currentPhoto = this._data[this._currentIdx]._data;
-
-    this._photo.src = currentPhoto.url;
-    this._photoLikes = currentPhoto.likes;
-    this._photoComments = currentPhoto.comments;
+    if (!currentPhoto) {
+      return;
+    }
+    this._photo.src = currentPhoto._data.url;
+    this._photoLikes = currentPhoto._data.likes;
+    this._photoComments = currentPhoto._data.comments;
   };
 
   /**

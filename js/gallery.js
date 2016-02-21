@@ -17,8 +17,8 @@
     this.el = document.querySelector('.gallery-overlay');
     this._closeButton = this.el.querySelector('.gallery-overlay-close');
     this._photo = this.el.querySelector('.gallery-overlay-image');
-    this._photoLikes = this.el.querySelector('.gallery-overlay-controls-like .likes-count');
-    this._photoComments = this.el.querySelector('.gallery-overlay-controls-comments .comments-count');
+    this._photoLikes = this.el.querySelector('.gallery-overlay-controls-like');
+    this._photoComments = this.el.querySelector('.gallery-overlay-controls-comments');
 
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);

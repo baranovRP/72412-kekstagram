@@ -95,8 +95,8 @@
       return;
     }
     this._photo.src = currentPhoto.url;
-    this._photoLikes.innerHTML = currentPhoto.likes;
-    this._photoComments.innerHTML = currentPhoto.comments;
+    this._photoLikes.textContent = currentPhoto.likes;
+    this._photoComments.textContent = currentPhoto.comments;
   };
 
   /**

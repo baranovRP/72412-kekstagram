@@ -25,7 +25,6 @@
    */
   function Photo() {
     this._onClick = this._onClick.bind(this);
-    PhotoBase.call(this);
   }
 
   inherit(Photo, PhotoBase);

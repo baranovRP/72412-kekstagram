@@ -1,3 +1,5 @@
+/* global inherit: true, PhotoBase: true */
+
 /**
  * @author Roman Baranov
  */
@@ -15,17 +17,21 @@
 
   var LOAD_TIMEOUT_MS = 10000;
 
+  Photo.prototype._data = null;
   /**
    * @param {Object} data
    * @constructor
+   * @extends {PhotoBase}
    */
-  function Photo(data) {
-    this._data = data;
+  function Photo() {
     this._onClick = this._onClick.bind(this);
+    PhotoBase.call(this);
   }
 
+  inherit(Photo, PhotoBase);
   /**
    * Create DOM-elements based on template.
+   * @override
    */
   Photo.prototype.render = function() {
     if ('content' in template) {
@@ -34,11 +40,11 @@
       this.el = template.childNodes[1].cloneNode(true);
     }
 
-    this.el.querySelector('.picture-likes').textContent = this._data.likes;
-    this.el.querySelector('.picture-comments').textContent = this._data.comments;
+    this.el.querySelector('.picture-likes').textContent = this.getData().likes;
+    this.el.querySelector('.picture-comments').textContent = this.getData().comments;
 
     var img = new Image();
-    img.src = this._data.url;
+    img.src = this.getData().url;
     img.width = IMG_SIZE.width;
     img.height = IMG_SIZE.height;
 

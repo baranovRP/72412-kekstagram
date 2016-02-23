@@ -132,7 +132,8 @@
     var domFragment = document.createDocumentFragment();
 
     picturesOnPage.map(function(picture, index) {
-      var photoEl = new Photo(picture);
+      var photoEl = new Photo();
+      photoEl.setData(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 

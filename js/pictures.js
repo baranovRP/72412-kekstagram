@@ -41,6 +41,7 @@
    */
   var pictures = [];
 
+  /** @type {Array} */
   var renderedEls = [];
 
   /**
@@ -55,6 +56,7 @@
    */
   var container = document.querySelector('.pictures');
 
+  /** @type {Gallery} */
   var gallery = new Gallery();
 
   /**
@@ -91,6 +93,7 @@
   /**
    * Hide elements on page, by adding 'hidden' class.
    * @param {Array} arrEls
+   * @method
    */
   function hideEls(arrEls) {
     arrEls.forEach(function(item) {
@@ -105,6 +108,7 @@
   /**
    * Show elements on page, by removing 'hidden' class.
    * @param {Array} arrEls
+   * @method
    */
   function showEls(arrEls) {
     arrEls.forEach(function(item) {
@@ -114,9 +118,10 @@
 
   /**
    * Create new page elements based on data from json.
-   * @param {Array.<Objects>} arrObjs
+   * @param {Array.<Object>} arrObjs
    * @param {number} pageNumber
-   * @param {boolean} replace
+   * @param {boolean=} replace
+   * @method
    */
   function renderEls(arrObjs, pageNumber, replace) {
     hideEls(filtersNodes);
@@ -156,7 +161,8 @@
 
   /**
    * Check that that pictures filled the whole page.
-   * @param {Array.<Objects>} arrObjs
+   * @param {Array.<Object>} arrObjs
+   * @method
    */
   function renderElsIfRequired(arrObjs) {
     var containerHeight = container.getBoundingClientRect().bottom;
@@ -181,6 +187,7 @@
 
   /**
    * Retrieve pictures data from json.
+   * @method
    */
   function getPictures() {
     var xhr = new XMLHttpRequest();
@@ -236,6 +243,7 @@
   /**
    * Set chosen filter ans sort pictures according to filter.
    * @param {String} id
+   * @method
    */
   function setActiveFilter(id) {
     if (activeFilter === id) {
@@ -261,6 +269,7 @@
         /**
          * Convert days into millisecs.
          * @param {number} days
+         * @method
          */
         var convertDaysToMsec = function(days) {
           return days * 24 * 60 * 60 * 1000;

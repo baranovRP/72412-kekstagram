@@ -4,13 +4,19 @@
 
 (function() {
 
+  /** @type {HTMLElement} */
   var template = document.querySelector('#picture-template');
 
+  /** @type {Object} */
   var IMG_SIZE = {
     width: 182,
     height: 182
   };
 
+  /**
+   * @const
+   * @type {number}
+   */
   var LOAD_TIMEOUT_MS = 10000;
 
   /**
@@ -27,6 +33,7 @@
 
   /**
    * Create DOM-elements based on template.
+   * @method
    */
   Photo.prototype.render = function() {
     if ('content' in template) {
@@ -70,6 +77,10 @@
     this.el.addEventListener('click', this._onClick);
   };
 
+  /**
+   * Remove DOM-elements.
+   * @method
+   */
   Photo.prototype.remove = function() {
     this.el.removeEventListener('click', this._onClick);
   };

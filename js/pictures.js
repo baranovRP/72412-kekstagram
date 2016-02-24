@@ -1,13 +1,18 @@
-/* global Photo: true, Gallery: true */
+'use strict';
 
 /**
  * @initializer of the photos' list.
  * @author Roman Baranov
  */
 
-'use strict';
-
 (function() {
+
+  /** @type {Gallery} */
+  var Gallery = require('./gallery');
+
+  /** @type {Photo} */
+  var Photo = require('./photo');
+
   /**
    * Types of sort filters.
    * @enum {String}

@@ -1,8 +1,6 @@
-/**
- * @author Roman Baranov
- */
-
 'use strict';
+
+/** @author Roman Baranov */
 
 (function() {
   /**
@@ -41,6 +39,9 @@
     this._onOverlayClick = this._onOverlayClick.bind(this);
     this._onCloseClick = this._onCloseClick.bind(this);
   }
+
+  /** @module gallery */
+  module.exports = Gallery;
 
   /**
    * Show gallery
@@ -160,9 +161,4 @@
     evt.preventDefault();
     this._showPicture(Direction.NEXT);
   };
-
-  /**
-   * @type {Gallery}
-   */
-  window.Gallery = Gallery;
 })();

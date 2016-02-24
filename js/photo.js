@@ -1,8 +1,6 @@
-/**
- * @author Roman Baranov
- */
-
 'use strict';
+
+/** @author Roman Baranov */
 
 (function() {
 
@@ -23,6 +21,9 @@
     this._data = data;
     this._onClick = this._onClick.bind(this);
   }
+
+  /** @module photo */
+  module.exports = Photo;
 
   /**
    * Create DOM-elements based on template.
@@ -93,6 +94,4 @@
    * @type {?Function}
    */
   Photo.prototype.onClick = null;
-
-  window.Photo = Photo;
 })();

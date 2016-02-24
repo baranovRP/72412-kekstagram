@@ -1,14 +1,17 @@
-/* global Resizer: true */
 /* global docCookies: true */
+
+'use strict';
 
 /**
  * @fileoverview
  * @author Igor Alexeenko (o0)
  */
 
-'use strict';
-
 (function() {
+
+  /** @type {Resizer} */
+  var Resizer = require('./resizer');
+
   /** @enum {string} */
   var FileType = {
     'GIF': '',

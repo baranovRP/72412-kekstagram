@@ -50,6 +50,9 @@
     this._onDrag = this._onDrag.bind(this);
   };
 
+  /** @module Resizer */
+  module.exports = Resizer;
+
   Resizer.prototype = {
     /**
      * Родительский элемент канваса.
@@ -444,6 +447,4 @@
     this.x = x;
     this.y = y;
   };
-
-  window.Resizer = Resizer;
 })();

@@ -87,14 +87,22 @@
   /**
    * Take and set picture from array by index
    * @method
-   * @param {number} idx
+   * @param {number|string} idx
    */
   Gallery.prototype.setCurrentPicture = function(idx) {
-    if (idx < 0 || idx > this._data.length - 1) {
-      return;
+    var currentPhoto;
+
+    if (typeof idx === 'number') {
+      if (idx < 0 || idx > this._data.length - 1) {
+        return;
+      }
+      this._currentIdx = idx;
+      currentPhoto = this._data[this._currentIdx];
+    } else if (typeof idx === 'string') {
+      currentPhoto = this._data.some(function(el) {
+        return el.url === idx;
+      });
     }
-    this._currentIdx = idx;
-    var currentPhoto = this._data[this._currentIdx];
 
     if (!currentPhoto) {
       return;

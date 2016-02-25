@@ -149,7 +149,8 @@
       photoEl.onClick = function() {
         var currentPosition = index + firstPicture;
         gallery.setCurrentPicture(currentPosition);
-        gallery.show();
+        //gallery.show();
+        gallery.setHashPhoto(photoEl._data.url);
       };
 
       renderedEls.push(photoEl);

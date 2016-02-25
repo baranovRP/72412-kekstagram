@@ -27,6 +27,7 @@
    */
   function Gallery() {
     this._currentIdx = 0;
+    this._photoHash = '';
 
     this.el = document.querySelector('.gallery-overlay');
     this._closeButton = this.el.querySelector('.gallery-overlay-close');
@@ -63,6 +64,7 @@
    * @method
    */
   Gallery.prototype.hide = function() {
+    location.hash = '';
     this.el.classList.add('invisible');
 
     this._photo.removeEventListener('click', this._onPhotoClick);
@@ -163,5 +165,15 @@
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
     this._showPicture(Direction.NEXT);
+  };
+
+  /**
+   * Set hash.
+   * @param{string} pathToPhoto
+   */
+  Gallery.prototype.setHashPhoto = function(pathToPhoto) {
+    if (pathToPhoto) {
+      location.hash = '#photo' + '/' + pathToPhoto;
+    }
   };
 })();

@@ -39,7 +39,7 @@
    * Array, for saving initial order of pictures.
    * @type {Array}
    */
-  var pictures = [];
+  var rawPictures = [];
 
   /** @type {Array} */
   var renderedEls = [];
@@ -63,7 +63,7 @@
    * Variable for saving current active filter.
    * @type {String}
    */
-  var activeFilter = SortFilter.POPULAR_F;
+  var activeFilter = localStorage.getItem('activeFilter') || SortFilter.POPULAR_F;
 
   /**
    * Load timeout
@@ -201,11 +201,11 @@
       evt.preventDefault();
 
       var rawData = evt.target.response;
-      pictures = JSON.parse(rawData);
-      filteredPictures = pictures.slice(0);
+      rawPictures = JSON.parse(rawData);
+      filteredPictures = rawPictures.slice(0);
 
-      renderEls(pictures, currentPage);
-      renderElsIfRequired(filteredPictures);
+      updatePictures(rawPictures);
+
       container.classList.remove('pictures-loading');
     };
 
@@ -243,10 +243,11 @@
   /**
    * Set chosen filter ans sort pictures according to filter.
    * @param {String} id
+   * @param {boolean=} force
    * @method
    */
-  function setActiveFilter(id) {
-    if (activeFilter === id) {
+  function setActiveFilter(id, force) {
+    if (activeFilter === id && !force) {
       return;
     }
 
@@ -254,11 +255,11 @@
     document.getElementById(activeFilter).checked = false;
     document.getElementById(id).checked = true;
 
-    filteredPictures = pictures.slice(0);
+    filteredPictures = rawPictures.slice(0);
 
     switch (id) {
       case SortFilter.POPULAR_F:
-        filteredPictures = pictures;
+        filteredPictures = rawPictures;
         break;
 
       case SortFilter.NEW_F:
@@ -298,6 +299,18 @@
     currentPage = 0;
     renderEls(filteredPictures, currentPage, true);
     renderElsIfRequired(filteredPictures);
+
+    localStorage.setItem('activeFilter', id);
+  }
+
+  /**
+   * Assign filtered pictures by default and force filtering according to set active filter
+   * @param {Array<Object>} rawPics
+   * @method
+   */
+  function updatePictures(rawPics) {
+    filteredPictures = rawPics;
+    setActiveFilter(activeFilter, true);
   }
 
   getPictures();

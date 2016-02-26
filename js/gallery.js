@@ -191,7 +191,7 @@
   };
 
   Gallery.prototype.togglePhoto = function() {
-    var matchedHash = window.location.hash.match(/#photo\/(\S+)/);
+    var matchedHash = location.hash.match(/#photo\/(\S+)/);
     if (Array.isArray(matchedHash)) {
       this.setCurrentPicture(matchedHash[1]);
       this.show();
@@ -207,7 +207,7 @@
    */
   Gallery.prototype.setHashPhoto = function(pathToPhoto) {
     if (pathToPhoto) {
-      window.location.hash = '#photo' + '/' + pathToPhoto;
+      location.hash = '#photo' + '/' + pathToPhoto;
     }
   };
 })();

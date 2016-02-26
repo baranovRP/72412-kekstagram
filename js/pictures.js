@@ -147,9 +147,8 @@
       domFragment.appendChild(photoEl.el);
 
       photoEl.onClick = function() {
-        //var currentPosition = index + firstPicture;
-        //gallery.setCurrentPicture(currentPosition);
-        //gallery.show();
+        var currentPosition = index + firstPicture;
+        gallery.setCurrentPicture(currentPosition);
         gallery.setHashPhoto(photoEl._data.url);
       };
 

@@ -147,8 +147,8 @@
       domFragment.appendChild(photoEl.el);
 
       photoEl.onClick = function() {
-        var currentPosition = index + firstPicture;
-        gallery.setCurrentPicture(currentPosition);
+        //var currentPosition = index + firstPicture;
+        //gallery.setCurrentPicture(currentPosition);
         //gallery.show();
         gallery.setHashPhoto(photoEl._data.url);
       };
@@ -206,6 +206,7 @@
       filteredPictures = rawPictures.slice(0);
 
       updatePictures(rawPictures);
+      gallery.togglePhoto();
 
       container.classList.remove('pictures-loading');
     };

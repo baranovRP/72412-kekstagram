@@ -27,7 +27,6 @@
    */
   function Gallery() {
     this._currentIdx = 0;
-    this._photoHash = '';
 
     this.el = document.querySelector('.gallery-overlay');
     this._closeButton = this.el.querySelector('.gallery-overlay-close');
@@ -39,6 +38,10 @@
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
     this._onCloseClick = this._onCloseClick.bind(this);
+    this._onHashChange = this._onHashChange.bind(this);
+
+    window.addEventListener('load', this._onHashChange);
+    window.addEventListener('hashchange', this._onHashChange);
   }
 
   /** @module gallery */
@@ -99,9 +102,12 @@
       this._currentIdx = idx;
       currentPhoto = this._data[this._currentIdx];
     } else if (typeof idx === 'string') {
-      currentPhoto = this._data.some(function(el) {
-        return el.url === idx;
-      });
+      for (var i = 0; i < this._data.length; i++) {
+        if (this._data[i].url === idx) {
+          currentPhoto = this._data[i];
+          return;
+        }
+      }
     }
 
     if (!currentPhoto) {
@@ -162,7 +168,7 @@
   Gallery.prototype._showPicture = function(direction) {
     var index = this._currentIdx + direction;
     if (this._data[index]) {
-      this.setCurrentPicture(index);
+      this.setHashPhoto(this._data[index].url);
     }
   };
 
@@ -176,12 +182,32 @@
   };
 
   /**
+   * Event handler, listen changes in hash.
+   * @private
+   */
+  Gallery.prototype._onHashChange = function(evt) {
+    evt.preventDefault();
+    this.togglePhoto();
+  };
+
+  Gallery.prototype.togglePhoto = function() {
+    var matchedHash = window.location.hash.match(/#photo\/(\S+)/);
+    if (Array.isArray(matchedHash)) {
+      this.setCurrentPicture(matchedHash[1]);
+      this.show();
+    } else {
+      this.hide();
+    }
+  };
+
+
+  /**
    * Set hash.
    * @param{string} pathToPhoto
    */
   Gallery.prototype.setHashPhoto = function(pathToPhoto) {
     if (pathToPhoto) {
-      location.hash = '#photo' + '/' + pathToPhoto;
+      window.location.hash = '#photo' + '/' + pathToPhoto;
     }
   };
 })();

@@ -1,13 +1,27 @@
-/* global pictures: true */
+'use strict';
 
 /**
  * @initializer of the photos' list.
  * @author Roman Baranov
  */
 
-'use strict';
-
 (function() {
+
+  /** @type {Gallery} */
+  var Gallery = require('./gallery');
+
+  /** @type {Photo} */
+  var Photo = require('./photo');
+
+  /**
+   * Types of sort filters.
+   * @enum {String}
+   */
+  var SortFilter = {
+    POPULAR_F: 'filter-popular',
+    NEW_F: 'filter-new',
+    DISCUSSED_F: 'filter-discussed'
+  };
 
   /**
    * Array, that contains nodes with class 'filters'.
@@ -16,20 +30,63 @@
   var filtersNodes = Array.prototype.slice.call(document.querySelectorAll('.filters'));
 
   /**
+   * HTMElement, that contains node with class 'filters'.
+   * @type {HTMLElement}
+   */
+  var filters = document.querySelector('.filters');
+
+  /**
+   * Array, for saving initial order of pictures.
+   * @type {Array}
+   */
+  var pictures = [];
+
+  var renderedEls = [];
+
+  /**
+   * Array, for saving filtered/sorted order of pictures.
+   * @type {Array}
+   */
+  var filteredPictures = [];
+
+  /**
    * Container for pictures.
    * @type {HtmlElement}
    */
   var container = document.querySelector('.pictures');
 
+  var gallery = new Gallery();
+
   /**
-   * Image size
-   * @const
-   * @type {Object}
+   * Variable for saving current active filter.
+   * @type {String}
    */
-  var IMG_SIZE = {
-    width: 182,
-    height: 182
-  };
+  var activeFilter = SortFilter.POPULAR_F;
+
+  /**
+   * Load timeout
+   * @const
+   * @type {number}
+   */
+  var LOAD_TIMEOUT = 10000;
+
+  var scrollTimeout;
+
+  /**
+   * Days age
+   * @const
+   * @type {number}
+   */
+  var DAYS_AGO = 14;
+
+  /**
+   * Pictures on page
+   * @const
+   * @type {number}
+   */
+  var PAGE_SIZE = 12;
+
+  var currentPage = 0;
 
   /**
    * Hide elements on page, by adding 'hidden' class.
@@ -56,57 +113,183 @@
   }
 
   /**
-   * Create new page elements based on data from jsonp.
-   * @param {Array} arrObjs
+   * Create new page elements based on data from json.
+   * @param {Array.<Objects>} arrObjs
+   * @param {number} pageNumber
+   * @param {boolean} replace
    */
-  function createElsFromJsonp(arrObjs) {
-    arrObjs.forEach(function(picture) {
-      var el = getElFromTemplate(picture);
-      container.appendChild(el);
+  function renderEls(arrObjs, pageNumber, replace) {
+    hideEls(filtersNodes);
+    if (replace) {
+      var el;
+      while ((el = renderedEls.shift())) {
+        container.removeChild(el.el);
+        el.onClick = null;
+        el.remove();
+      }
+    }
+
+    gallery.setPictures(arrObjs);
+
+    var firstPicture = pageNumber * PAGE_SIZE;
+    var lastPicture = firstPicture + PAGE_SIZE;
+    var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
+    var domFragment = document.createDocumentFragment();
+
+    picturesOnPage.map(function(picture, index) {
+      var photoEl = new Photo(picture);
+      photoEl.render();
+      domFragment.appendChild(photoEl.el);
+
+      photoEl.onClick = function() {
+        var currentPosition = index + firstPicture;
+        gallery.setCurrentPicture(currentPosition);
+        gallery.show();
+      };
+
+      renderedEls.push(photoEl);
     });
+
+    container.appendChild(domFragment);
+    showEls(filtersNodes);
   }
 
   /**
-   * Create DOM-elements based on template.
-   * @param {Object} data
-   * @return {Element}
+   * Check that that pictures filled the whole page.
+   * @param {Array.<Objects>} arrObjs
    */
-  function getElFromTemplate(data) {
-    var template = document.querySelector('#picture-template');
-    var el;
+  function renderElsIfRequired(arrObjs) {
+    var containerHeight = container.getBoundingClientRect().bottom;
 
-    if ('content' in template) {
-      el = template.content.children[0].cloneNode(true);
-    } else {
-      el = template.children[0].cloneNode(true);
+    if (containerHeight <= window.innerHeight) {
+      if (currentPage < Math.ceil(arrObjs.length / PAGE_SIZE)) {
+        renderEls(arrObjs, ++currentPage);
+      }
     }
-
-    el.querySelector('.picture-likes').textContent = data.likes;
-    el.querySelector('.picture-comments').textContent = data.comments;
-
-    var img = new Image();
-    img.src = data.url;
-    img.width = IMG_SIZE.width;
-    img.height = IMG_SIZE.height;
-
-    /**
-     * Event handler, to replace template's element by uploaded image.
-     */
-    img.onload = function() {
-      el.replaceChild(img, el.querySelector('img'));
-    };
-
-    /**
-     * Event handler, to add failure class in a case of error.
-     */
-    img.onerror = function() {
-      el.classList.add('picture-load-failure');
-    };
-
-    return el;
   }
 
-  hideEls(filtersNodes);
-  createElsFromJsonp(pictures);
-  showEls(filtersNodes);
+  /**
+   * Event handler, set delay for scrolling.
+   */
+  window.addEventListener('scroll', function(evt) {
+    evt.preventDefault();
+
+    var delayMsec = 100;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(renderElsIfRequired(filteredPictures), delayMsec);
+  });
+
+  /**
+   * Retrieve pictures data from json.
+   */
+  function getPictures() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.timeout = LOAD_TIMEOUT;
+    xhr.open('GET', '//o0.github.io/assets/json/pictures.json');
+
+    container.classList.add('pictures-loading');
+
+    xhr.onload = function(evt) {
+      evt.preventDefault();
+
+      var rawData = evt.target.response;
+      pictures = JSON.parse(rawData);
+      filteredPictures = pictures.slice(0);
+
+      renderEls(pictures, currentPage);
+      renderElsIfRequired(filteredPictures);
+      container.classList.remove('pictures-loading');
+    };
+
+    /**
+     * Event handler, remove loading mask and add failure mask in a case of error.
+     */
+    var handleError = function(evt) {
+      evt.preventDefault();
+
+      if (container.classList.contains('pictures-loading')) {
+        container.classList.remove('pictures-loading');
+      }
+      container.classList.add('pictures-failure');
+    };
+
+    xhr.onerror = handleError;
+    xhr.ontimeout = handleError;
+
+    xhr.send();
+  }
+
+  /**
+   * Add click event handlers for each sort filter.
+   * @param {HTMLElement} el
+   */
+  filters.addEventListener('click', function(evt) {
+    evt.preventDefault();
+
+    var clickeEl = evt.target;
+    if (clickeEl.classList.contains('filters-item')) {
+      setActiveFilter(clickeEl.previousElementSibling.id);
+    }
+  });
+
+  /**
+   * Set chosen filter ans sort pictures according to filter.
+   * @param {String} id
+   */
+  function setActiveFilter(id) {
+    if (activeFilter === id) {
+      return;
+    }
+
+    activeFilter = id;
+    document.getElementById(activeFilter).checked = false;
+    document.getElementById(id).checked = true;
+
+    filteredPictures = pictures.slice(0);
+
+    switch (id) {
+      case SortFilter.POPULAR_F:
+        filteredPictures = pictures;
+        break;
+
+      case SortFilter.NEW_F:
+        var sortedByDate = filteredPictures.sort(function(a, b) {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+
+        /**
+         * Convert days into millisecs.
+         * @param {number} days
+         */
+        var convertDaysToMsec = function(days) {
+          return days * 24 * 60 * 60 * 1000;
+        };
+
+        filteredPictures = sortedByDate.filter(function(el) {
+
+          var daysAgoInMsec = function(days) {
+            return +Date.now() - convertDaysToMsec(days);
+          };
+
+          return new Date(el.date).getTime() - daysAgoInMsec(DAYS_AGO) >= 0;
+        });
+        break;
+
+      case SortFilter.DISCUSSED_F:
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return b.comments - a.comments;
+        });
+        break;
+
+      default:
+        throw new Error('Unexpected id name: ' + id);
+    }
+
+    currentPage = 0;
+    renderEls(filteredPictures, currentPage, true);
+    renderElsIfRequired(filteredPictures);
+  }
+
+  getPictures();
 })();

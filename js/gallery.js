@@ -45,7 +45,7 @@
   }
 
   /** @module gallery */
-  module.exports = Gallery;
+  //module.exports = Gallery;
 
   /**
    * Show gallery
@@ -56,7 +56,7 @@
 
     this._photo.addEventListener('click', this._onPhotoClick);
 
-    this.setCurrentPicture(this._currentIdx);
+    //this.setCurrentPicture(this._currentIdx);
     document.addEventListener('keydown', this._onDocumentKeyDown);
     this.el.addEventListener('click', this._onOverlayClick);
     this._closeButton.addEventListener('click', this._onCloseClick);
@@ -94,7 +94,7 @@
    */
   Gallery.prototype.setCurrentPicture = function(idx) {
     var currentPhoto;
-
+    console.log('idx:' + idx);
     if (typeof idx === 'number') {
       if (idx < 0 || idx > this._data.length - 1) {
         return;
@@ -105,7 +105,8 @@
       for (var i = 0; i < this._data.length; i++) {
         if (this._data[i].url === idx) {
           currentPhoto = this._data[i];
-          return;
+          this._currentIdx = i;
+          break;
         }
       }
     }
@@ -113,6 +114,7 @@
     if (!currentPhoto) {
       return;
     }
+
     this._photo.src = currentPhoto.url;
     this._photoLikes.textContent = currentPhoto.likes;
     this._photoComments.textContent = currentPhoto.comments;
@@ -166,8 +168,10 @@
    * @private
    */
   Gallery.prototype._showPicture = function(direction) {
+    console.log('_onPhotoClick: ' + this._currentIdx + ' const: ' + direction);
     var index = this._currentIdx + direction;
     if (this._data[index]) {
+      console.log('_showPicture: ' + this._data[index]);
       this.setHashPhoto(this._data[index].url);
     }
   };
@@ -178,6 +182,7 @@
    */
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
+    console.log('_onPhotoClick');
     this._showPicture(Direction.NEXT);
   };
 
@@ -186,7 +191,7 @@
    * @private
    */
   Gallery.prototype._onHashChange = function(evt) {
-    evt.preventDefault();
+    //evt.preventDefault();
     this.togglePhoto();
   };
 
@@ -210,4 +215,5 @@
       location.hash = '#photo' + '/' + pathToPhoto;
     }
   };
+  window.Gallery = Gallery;
 })();

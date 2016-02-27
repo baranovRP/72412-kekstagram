@@ -29,7 +29,7 @@
   }
 
   /** @module photo */
-  module.exports = Photo;
+  //module.exports = Photo;
 
   /**
    * Create DOM-elements based on template.
@@ -105,4 +105,6 @@
    * @type {?Function}
    */
   Photo.prototype.onClick = null;
+
+  window.Photo = Photo;
 })();

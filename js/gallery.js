@@ -56,7 +56,6 @@
 
     this._photo.addEventListener('click', this._onPhotoClick);
 
-    //this.setCurrentPicture(this._currentIdx);
     document.addEventListener('keydown', this._onDocumentKeyDown);
     this.el.addEventListener('click', this._onOverlayClick);
     this._closeButton.addEventListener('click', this._onCloseClick);
@@ -210,5 +209,4 @@
       window.location.hash = '#photo' + '/' + pathToPhoto;
     }
   };
-  window.Gallery = Gallery;
-})('getParent');
+})();

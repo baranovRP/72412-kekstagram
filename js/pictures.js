@@ -165,7 +165,7 @@
   function renderElsIfRequired(arrObjs) {
     var containerHeight = container.getBoundingClientRect().bottom;
 
-    if (containerHeight <= window.innerHeight) {
+    if (containerHeight <= document.body.clientHeight) {
       if (currentPage < Math.ceil(arrObjs.length / PAGE_SIZE)) {
         renderEls(arrObjs, ++currentPage);
       }

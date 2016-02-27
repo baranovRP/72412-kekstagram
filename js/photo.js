@@ -106,5 +106,4 @@
    */
   Photo.prototype.onClick = null;
 
-  window.Photo = Photo;
-})('getParent');
+})();

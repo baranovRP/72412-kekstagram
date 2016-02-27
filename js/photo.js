@@ -21,6 +21,7 @@
    */
   function Photo(data) {
     this._data = data;
+    this._onClick = this._onClick.bind(this);
   }
 
   /**
@@ -64,7 +65,34 @@
       img.src = '';
       this.el.classList.add('picture-load-failure');
     }.bind(this), LOAD_TIMEOUT_MS);
+
+    this.el.addEventListener('click', this._onClick);
   };
+
+  Photo.prototype.remove = function() {
+    this.el.removeEventListener('click', this._onClick);
+  };
+
+  /**
+   * Event handler, click on picture
+   * @param {Event} evt
+   * @private
+   */
+  Photo.prototype._onClick = function(evt) {
+    evt.preventDefault();
+
+    if (evt.target.parentNode.classList.contains('picture')
+      && !evt.target.parentNode.classList.contains('picture-load-failure')) {
+      if (typeof this.onClick === 'function') {
+        this.onClick();
+      }
+    }
+  };
+
+  /**
+   * @type {?Function}
+   */
+  Photo.prototype.onClick = null;
 
   window.Photo = Photo;
 })();

@@ -36,6 +36,8 @@
    */
   var pictures = [];
 
+  var renderedEls = [];
+
   /**
    * Array, for saving filtered/sorted order of pictures.
    * @type {Array}
@@ -114,33 +116,37 @@
   function renderEls(arrObjs, pageNumber, replace) {
     hideEls(filtersNodes);
     if (replace) {
-      var allPictures = document.querySelectorAll('.picture');
-      Array.prototype.forEach.call(allPictures, function(picture) {
-        picture.removeEventListener('click', _onPictureClick);
-        container.removeChild(picture);
-      });
+      var el;
+      while ((el = renderedEls.shift())) {
+        container.removeChild(el.el);
+        el.onClick = null;
+        el.remove();
+      }
     }
+
+    gallery.setPictures(arrObjs);
 
     var firstPicture = pageNumber * PAGE_SIZE;
     var lastPicture = firstPicture + PAGE_SIZE;
     var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
-
     var domFragment = document.createDocumentFragment();
-    picturesOnPage.forEach(function(picture) {
+
+    picturesOnPage.map(function(picture, index) {
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 
-      photoEl.el.addEventListener('click', _onPictureClick);
+      photoEl.onClick = function() {
+        var currentPosition = index + firstPicture;
+        gallery.setCurrentPicture(currentPosition);
+        gallery.show();
+      };
+
+      renderedEls.push(photoEl);
     });
 
     container.appendChild(domFragment);
     showEls(filtersNodes);
-  }
-
-  function _onPictureClick(evt) {
-    evt.preventDefault();
-    gallery.show();
   }
 
   /**
@@ -160,7 +166,9 @@
   /**
    * Event handler, set delay for scrolling.
    */
-  window.addEventListener('scroll', function() {
+  window.addEventListener('scroll', function(evt) {
+    evt.preventDefault();
+
     var delayMsec = 100;
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(renderElsIfRequired(filteredPictures), delayMsec);
@@ -178,6 +186,8 @@
     container.classList.add('pictures-loading');
 
     xhr.onload = function(evt) {
+      evt.preventDefault();
+
       var rawData = evt.target.response;
       pictures = JSON.parse(rawData);
       filteredPictures = pictures.slice(0);
@@ -190,7 +200,9 @@
     /**
      * Event handler, remove loading mask and add failure mask in a case of error.
      */
-    var handleError = function() {
+    var handleError = function(evt) {
+      evt.preventDefault();
+
       if (container.classList.contains('pictures-loading')) {
         container.classList.remove('pictures-loading');
       }
@@ -208,6 +220,8 @@
    * @param {HTMLElement} el
    */
   filters.addEventListener('click', function(evt) {
+    evt.preventDefault();
+
     var clickeEl = evt.target;
     if (clickeEl.classList.contains('filters-item')) {
       setActiveFilter(clickeEl.previousElementSibling.id);

@@ -45,7 +45,7 @@
   }
 
   /** @module gallery */
-  //module.exports = Gallery;
+  module.exports = Gallery;
 
   /**
    * Show gallery
@@ -67,7 +67,7 @@
    * @method
    */
   Gallery.prototype.hide = function() {
-    location.hash = '';
+    window.location.hash = '';
     this.el.classList.add('invisible');
 
     this._photo.removeEventListener('click', this._onPhotoClick);
@@ -94,7 +94,6 @@
    */
   Gallery.prototype.setCurrentPicture = function(idx) {
     var currentPhoto;
-    console.log('idx:' + idx);
     if (typeof idx === 'number') {
       if (idx < 0 || idx > this._data.length - 1) {
         return;
@@ -168,10 +167,8 @@
    * @private
    */
   Gallery.prototype._showPicture = function(direction) {
-    console.log('_onPhotoClick: ' + this._currentIdx + ' const: ' + direction);
     var index = this._currentIdx + direction;
     if (this._data[index]) {
-      console.log('_showPicture: ' + this._data[index]);
       this.setHashPhoto(this._data[index].url);
     }
   };
@@ -182,7 +179,6 @@
    */
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
-    console.log('_onPhotoClick');
     this._showPicture(Direction.NEXT);
   };
 
@@ -190,13 +186,12 @@
    * Event handler, listen changes in hash.
    * @private
    */
-  Gallery.prototype._onHashChange = function(evt) {
-    //evt.preventDefault();
+  Gallery.prototype._onHashChange = function() {
     this.togglePhoto();
   };
 
   Gallery.prototype.togglePhoto = function() {
-    var matchedHash = location.hash.match(/#photo\/(\S+)/);
+    var matchedHash = window.location.hash.match(/#photo\/(\S+)/);
     if (Array.isArray(matchedHash)) {
       this.setCurrentPicture(matchedHash[1]);
       this.show();
@@ -212,8 +207,8 @@
    */
   Gallery.prototype.setHashPhoto = function(pathToPhoto) {
     if (pathToPhoto) {
-      location.hash = '#photo' + '/' + pathToPhoto;
+      window.location.hash = '#photo' + '/' + pathToPhoto;
     }
   };
   window.Gallery = Gallery;
-})();
+})('getParent');

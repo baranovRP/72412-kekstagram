@@ -7,11 +7,11 @@
 
 (function() {
 
-  ///** @type {Gallery} */
-  //var Gallery = require('./gallery');
-  //
-  ///** @type {Photo} */
-  //var Photo = require('./photo');
+  /** @type {Gallery} */
+  var Gallery = require('gallery');
+
+  /** @type {Photo} */
+  var Photo = require('photo');
 
   /**
    * Types of sort filters.
@@ -141,14 +141,12 @@
     var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
     var domFragment = document.createDocumentFragment();
 
-    picturesOnPage.map(function(picture, index) {
+    picturesOnPage.map(function(picture) {
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 
       photoEl.onClick = function() {
-        //var currentPosition = index + firstPicture;
-        //gallery.setCurrentPicture(currentPosition);
         gallery.setHashPhoto(photoEl._data.url);
       };
 

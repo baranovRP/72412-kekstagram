@@ -105,4 +105,5 @@
    * @type {?Function}
    */
   Photo.prototype.onClick = null;
+
 })();

@@ -8,10 +8,10 @@
 (function() {
 
   /** @type {Gallery} */
-  var Gallery = require('./gallery');
+  var Gallery = require('gallery');
 
   /** @type {Photo} */
-  var Photo = require('./photo');
+  var Photo = require('photo');
 
   /**
    * Types of sort filters.
@@ -141,15 +141,13 @@
     var picturesOnPage = arrObjs.slice(firstPicture, lastPicture);
     var domFragment = document.createDocumentFragment();
 
-    picturesOnPage.map(function(picture, index) {
+    picturesOnPage.map(function(picture) {
       var photoEl = new Photo(picture);
       photoEl.render();
       domFragment.appendChild(photoEl.el);
 
       photoEl.onClick = function() {
-        var currentPosition = index + firstPicture;
-        gallery.setCurrentPicture(currentPosition);
-        gallery.show();
+        gallery.setHashPhoto(photoEl._data.url);
       };
 
       renderedEls.push(photoEl);
@@ -167,7 +165,7 @@
   function renderElsIfRequired(arrObjs) {
     var containerHeight = container.getBoundingClientRect().bottom;
 
-    if (containerHeight <= window.innerHeight) {
+    if (containerHeight <= document.body.clientHeight) {
       if (currentPage < Math.ceil(arrObjs.length / PAGE_SIZE)) {
         renderEls(arrObjs, ++currentPage);
       }
@@ -205,6 +203,7 @@
       filteredPictures = rawPictures.slice(0);
 
       updatePictures(rawPictures);
+      gallery.togglePhoto();
 
       container.classList.remove('pictures-loading');
     };

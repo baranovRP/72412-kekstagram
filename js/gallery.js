@@ -38,6 +38,10 @@
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
     this._onCloseClick = this._onCloseClick.bind(this);
+    this._onHashChange = this._onHashChange.bind(this);
+
+    window.addEventListener('load', this._onHashChange);
+    window.addEventListener('hashchange', this._onHashChange);
   }
 
   /** @module gallery */
@@ -52,7 +56,6 @@
 
     this._photo.addEventListener('click', this._onPhotoClick);
 
-    this.setCurrentPicture(this._currentIdx);
     document.addEventListener('keydown', this._onDocumentKeyDown);
     this.el.addEventListener('click', this._onOverlayClick);
     this._closeButton.addEventListener('click', this._onCloseClick);
@@ -63,6 +66,7 @@
    * @method
    */
   Gallery.prototype.hide = function() {
+    window.location.hash = '';
     this.el.classList.add('invisible');
 
     this._photo.removeEventListener('click', this._onPhotoClick);
@@ -85,18 +89,30 @@
   /**
    * Take and set picture from array by index
    * @method
-   * @param {number} idx
+   * @param {number|string} idx
    */
   Gallery.prototype.setCurrentPicture = function(idx) {
-    if (idx < 0 || idx > this._data.length - 1) {
-      return;
+    var currentPhoto;
+    if (typeof idx === 'number') {
+      if (idx < 0 || idx > this._data.length - 1) {
+        return;
+      }
+      this._currentIdx = idx;
+      currentPhoto = this._data[this._currentIdx];
+    } else if (typeof idx === 'string') {
+      for (var i = 0; i < this._data.length; i++) {
+        if (this._data[i].url === idx) {
+          currentPhoto = this._data[i];
+          this._currentIdx = i;
+          break;
+        }
+      }
     }
-    this._currentIdx = idx;
-    var currentPhoto = this._data[this._currentIdx];
 
     if (!currentPhoto) {
       return;
     }
+
     this._photo.src = currentPhoto.url;
     this._photoLikes.textContent = currentPhoto.likes;
     this._photoComments.textContent = currentPhoto.comments;
@@ -152,7 +168,7 @@
   Gallery.prototype._showPicture = function(direction) {
     var index = this._currentIdx + direction;
     if (this._data[index]) {
-      this.setCurrentPicture(index);
+      this.setHashPhoto(this._data[index].url);
     }
   };
 
@@ -163,5 +179,34 @@
   Gallery.prototype._onPhotoClick = function(evt) {
     evt.preventDefault();
     this._showPicture(Direction.NEXT);
+  };
+
+  /**
+   * Event handler, listen changes in hash.
+   * @private
+   */
+  Gallery.prototype._onHashChange = function() {
+    this.togglePhoto();
+  };
+
+  Gallery.prototype.togglePhoto = function() {
+    var matchedHash = window.location.hash.match(/#photo\/(\S+)/);
+    if (Array.isArray(matchedHash)) {
+      this.setCurrentPicture(matchedHash[1]);
+      this.show();
+    } else {
+      this.hide();
+    }
+  };
+
+
+  /**
+   * Set hash.
+   * @param{string} pathToPhoto
+   */
+  Gallery.prototype.setHashPhoto = function(pathToPhoto) {
+    if (pathToPhoto) {
+      window.location.hash = '#photo' + '/' + pathToPhoto;
+    }
   };
 })();

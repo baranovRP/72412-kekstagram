@@ -1,8 +1,6 @@
-/**
- * @author Roman Baranov
- */
-
 'use strict';
+
+/** @author Roman Baranov */
 
 (function() {
   /**
@@ -11,9 +9,8 @@
    * @param {Function} parent
    */
   function inherit(child, parent) {
-    /**
-     * @constructor
-     */
+
+    /** @constructor */
     var EmptyConstructor = function() {
     };
 

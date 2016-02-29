@@ -45,6 +45,7 @@
 
   /**
    * Show gallery
+   * @method
    */
   Gallery.prototype.show = function() {
     this.el.classList.remove('invisible');
@@ -59,6 +60,7 @@
 
   /**
    * Hide gallery
+   * @method
    */
   Gallery.prototype.hide = function() {
     this.el.classList.add('invisible');
@@ -102,6 +104,7 @@
 
   /**
    * Event handler, close gallery by pressing on 'Esc' button.
+   * @private
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     evt.preventDefault();
@@ -143,8 +146,8 @@
 
   /**
    * Show picture, next/prev depends on direction
-   * @private
    * @param{number} direction
+   * @private
    */
   Gallery.prototype._showPicture = function(direction) {
     var index = this._currentIdx + direction;
